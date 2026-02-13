@@ -1,4 +1,9 @@
 {
+  "las_cuchillas": {
+    "label": "Las Cuchillas",
+    "csv": "data/las_cuchillas.csv",
+    "source": "las_cuchillas.xls"
+  },
   "los_carbonales": {
     "label": "Los Carbonales",
     "csv": "data/los_carbonales.csv",
