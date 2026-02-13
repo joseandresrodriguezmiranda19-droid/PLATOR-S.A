@@ -1439,5 +1439,82 @@ function loadCSVFile(file) {
   }
   render();
 </script>
+  <script>
+async function autoLoadFromRepo() {
+  const finRes = await fetch("./data/fincas.json?ts=" + Date.now(), { cache: "no-store" });
+  if (!finRes.ok) throw new Error("No se encontró data/fincas.json");
+  const fincas = await finRes.json();
+  const entries = Object.entries(fincas);
+
+  if (!entries.length) {
+    if (typeof setStatus === "function") setStatus("No hay fincas en data/fincas.json");
+    return;
+  }
+
+  if (typeof setStatus === "function") setStatus(`Cargando ${entries.length} finca(s) desde la nube…`);
+
+  // Reset filtros (si existen esas variables en tu dashboard)
+  try {
+    MS.Finca?.selected?.clear?.();
+    MS.Estado?.selected?.clear?.();
+    MS.EA?.selected?.clear?.();
+    MS.TPre?.selected?.clear?.();
+    fEdadMin.value = "";
+    fEdadMax.value = "";
+    fSearch.value = "";
+    tSort.value = "EdadAnios_desc";
+    PAGE = 1;
+  } catch (e) {}
+
+  const allRows = [];
+  const metas = [];
+
+  for (let i = 0; i < entries.length; i++) {
+    const [slug, info] = entries[i];
+    const url = "./" + info.csv + "?ts=" + Date.now();
+
+    const r = await fetch(url, { cache: "no-store" });
+    if (!r.ok) continue;
+
+    const text = await r.text();
+    const fakeFile = { name: slug + ".csv" };
+
+    const out = parseCSVText(fakeFile, text); // <- ya existe en tu dashboard
+    if (out?.rows?.length) allRows.push(...out.rows);
+    metas.push({ fileName: fakeFile.name, ...(out?.meta || {}) });
+
+    if (typeof setStatus === "function") setStatus(`Cargando (${i+1}/${entries.length}): ${info.label || slug}…`);
+  }
+
+  if (!allRows.length) {
+    if (typeof setStatus === "function") setStatus("No se detectaron filas válidas en data/*.csv");
+    return;
+  }
+
+  RAW = allRows;
+  initFilters();
+
+  // Finca por defecto (opcional)
+  try {
+    const defaultFinca = "Las Cuchillas";
+    if (MS.Finca?.options?.includes?.(defaultFinca)) {
+      MS.Finca.selected = new Set([defaultFinca]);
+      msSync(MS.Finca);
+    }
+  } catch (e) {}
+
+  render();
+
+  if (typeof setStatus === "function") setStatus(`Cargadas ${entries.length} finca(s) — ${allRows.length} registros`);
+}
+
+window.addEventListener("DOMContentLoaded", () => {
+  autoLoadFromRepo().catch(err => {
+    console.error(err);
+    if (typeof setStatus === "function") setStatus("No se pudo cargar automático. Usa 'Subir archivos' como respaldo.");
+  });
+});
+</script>
+
 </body>
 </html>
