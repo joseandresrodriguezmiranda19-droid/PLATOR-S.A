@@ -4719,6 +4719,33 @@ function detectModuleFromFilename(fileName) {
   return FILE_NAME_TO_MODULE[base] || null;
 }
 </script>
+  <script>
+async function autoLoadInforme() {
+  const res = await fetch("./data/sheets.json?ts=" + Date.now(), { cache: "no-store" });
+  if (!res.ok) throw new Error("No se encontró informe/data/sheets.json");
 
+  const list = await res.json();
+  const files = [];
+
+  for (const item of list) {
+    const r = await fetch("./" + item.csv + "?ts=" + Date.now(), { cache: "no-store" });
+    if (!r.ok) continue;
+    const text = await r.text();
+
+    // Importante: el nombre del "File" ayuda a la detección de módulos
+    files.push(new File([text], item.fileName || (item.slug + ".csv"), { type: "text/csv" }));
+  }
+
+  if (typeof handleMultipleFiles !== "function") {
+    throw new Error("No existe handleMultipleFiles() en este dashboard.");
+  }
+
+  if (files.length) handleMultipleFiles(files);
+}
+
+window.addEventListener("load", () => {
+  autoLoadInforme().catch(console.error);
+});
+</script>
 
 </body></html>
