@@ -1,51 +1,51 @@
 PLASENCIA   TORRES   S,A;;;;;;;;
-FECHA DE CORTE AL :  ESTELI  31 ENERO DEL 2026;;;;;;;;
+FECHA DE CORTE AL :  ESTELI  28 FEBRERO DEL 2026;;;;;;;;
 INVENTARIOS DE GANADO BOVINO > FINCAS DE ESTELI;;;;;;;;
 Sexo / Categoría;Existencia;E  N  T  R  A  D  A  S;;;S  A  L  I  D  A  S;;;Existencia
 ;Inicial;Compras;Nacimientos;Traslado;Ventas;Muertos;Traslado;Final
 MACHOS;;;;;;;;
--Novillos;12;;;4;;;;16
+-Novillos;16;;;;;;;16
 -Novillos Comp.;0;;;;;;;0
--Cría Machos;128;;8;4;;;4;136
+-Cría Machos;136;;2;;;;;138
 -Reproductores;47;;;;;;;47
 -Toretes Reproduct;9;;;;;;;9
 -Bueyes;14;;;;;;;14
-SUB - TOTAL;210;0;8;8;0;0;4;222
+SUB - TOTAL;222;0;2;0;0;0;0;224
 HEMBRAS > Adultas;;;;;;;;
--Vacas Paridas;297;;;24;;;14;307
--Vacas Secas;146;;;2;;;12;136
+-Vacas Paridas;307;;;3;;;;310
+-Vacas Secas;136;;;;;;3;133
 -Animales Descate;0;;;;;;;0
--Nov. Vientre;138;;;;;1;;137
-SUB - TOTAL;581;0;0;26;0;1;26;580
+-Nov. Vientre;137;;;;;;;137
+SUB - TOTAL;580;0;0;3;0;0;3;580
 HEMBRAS > Menores;;;;;;;;
--Crías Hembras;168;;2;11;;;10;171
--Hembras Levante;304;;;;32;1;;271
-SUB - TOTAL;472;0;2;11;32;1;10;442
+-Crías Hembras;171;;1;;;;;172
+-Hembras Levante;271;;;;;;;271
+SUB - TOTAL;442;0;1;0;0;0;0;443
 ;;;;;;;;
-TOTAL > ESTELI;1263;0;10;45;32;2;40;1244
+TOTAL > ESTELI;1244;0;3;3;0;0;3;1247
 INVENTARIOS DE GANADO BOVINO > FINCAS DE JALAPA;;;;;;;;
 Sexo / Categoría;Existencia;E  N  T  R  A  D  A  S;;;S  A  L  I  D  A  S;;;Existencia
 ;Inicial;Compras;Nacimientos;Traslado;Ventas;Muertos;Traslado;Final
 MACHOS;;;;;;;;
--Novillos;31;;;;;;;31
--Cría Machos;164;;24;;;;;188
+-Novillos;31;;;63;72;;;22
+-Cría Machos;190;;;;;1;63;126
 -Reproductores;25;;;;;;;25
 -Toretes Reproduct;0;;;;;;;0
-SUB - TOTAL;220;0;24;0;0;0;0;244
+SUB - TOTAL;246;0;0;63;72;1;63;173
 HEMBRAS > Adultas;;;;;;;;
--Vacas Paridas;384;;;39;;;;423
--Vacas Secas;178;;;;;;39;139
+-Vacas Paridas;428;;;1;;;;429
+-Vacas Secas;134;;;;;;1;133
 -Animales Descarte;0;;;;;;;0
 -Nov. Vientre;143;;;;;;;143
-SUB - TOTAL;705;0;0;39;0;0;39;705
+SUB - TOTAL;705;0;0;1;0;0;1;705
 HEMBRAS > Menores;;;;;;;;
--Crías Hembras;220;;15;;;;;235
--Hembras Levante;154;;;;31;;;123
-SUB - TOTAL;374;0;15;0;31;0;0;358
+-Crías Hembras;238;;1;;;;;239
+-Hembras Levante;122;;;;;;;122
+SUB - TOTAL;360;0;1;0;0;0;0;361
 ;;;;;;;;
-TOTAL > JALAPA;1299;0;39;39;31;0;39;1307
+TOTAL > JALAPA;1311;0;1;64;72;1;64;1239
 ;;;;;;;;
-TOTAL ESTELI Y JALAPA;2562;0;49;84;63;2;79;2551
+TOTAL ESTELI Y JALAPA;2555;0;4;67;72;1;67;2486
 ;;;;;;;;
-;;;;;;;;2551
+;;;;;;;;2486
 ;;;;;;;;0

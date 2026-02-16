@@ -4,7 +4,7 @@ INFORME DE DESTETE ENTRE : 01-01-2026 Y 31-08-2026;;;;;;;;;;;;;;;
 M E S;T O T A L;PESO KGS;;INCREM. KS;EDAD;T O T A L;PESO KGS;;INCREM. KS;EDAD;T O T A L;PESO KGS;;INCREM. KS;EDAD
 ;;NACIM.;DESTETE;DESTETE;DIAS;;NACIM.;DESTETE;DESTETE;DIAS;;NACIM.;DESTETE;DESTETE;DIAS
 Enero;;;;;;;;;;;;;;;
-Febrero;;;;;;;;;;;;;;;
+Febrero;63;1780;11751;9971;240;;;;;;63;1780;9971;240;8
 Marzo;;;;;;;;;;;;;;;
 Abril;;;;;;;;;;;;;;;
 Mayo;;;;;;;;;;;;;;;
@@ -15,9 +15,9 @@ Septiembre;;;;;;;;;;;;;;;
 Octubre;;;;;;;;;;;;;;;
 Noviembre;;;;;;;;;;;;;;;
 Diciembre;;;;;;;;;;;;;;;
-TOTAL KGS;0;0;0;0;;0;0;0;0;;0;0;0;0;
+TOTAL KGS;63;1780;11751;9971;;0;0;0;0;;63;1780;9971;240;
 ;Suma;Promedio;Promedio;Promedio;Promedio;Suma;Promedio;Promedio;Promedio;Promedio;Suma;Promedio;Promedio;Promedio;Promedio
-;0;;;;;0;;;;;0;;;;
+;63;28.253968253968253;186.52380952380952;158.26984126984127;;0;;;;;63;28.253968253968253;158.26984126984127;3.8095238095238093;
 ;;;;;;;;;;;;;;;
 TOAL DE KILOS DESTETADOS;;;;;TOTAL KILOS X HECTAREAS;;;;;KILOS DESTETE/AÑO/HECTAREAS.:;;;;;
 ;;;;;;;;;;;;;;;

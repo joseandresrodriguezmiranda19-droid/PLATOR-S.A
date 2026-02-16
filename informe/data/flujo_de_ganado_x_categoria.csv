@@ -10,16 +10,16 @@ HATO REPRODUCTIVO;;;;;;;;;
 4;Hembras Descarte;0;;;;;;;0
 SUB - TOTAL;;1286;0;0;1;0;49;49;1285
 GANADO BOVINO MENOR;;;;;;;;;
-5;Crías Machos;292;32;;;;;;324
-6;Crías Hembras;388;17;;;;;1;406
-7;Hembras Levante;458;;;1;63;;;394
-SUB - TOTAL;;1138;49;0;1;63;0;1;1124
+5;Crías Machos;292;36;;1;;63;;264
+6;Crías Hembras;388;22;;;;;1;411
+7;Hembras Levante;458;;;2;63;;;393
+SUB - TOTAL;;1138;58;0;3;63;63;1;1068
 GANADO MACHOS;;;;;;;;;
-8;Novillos;43;;;;;;4;47
+8;Novillos;43;;;;72;;67;38
 9;Novillos Comprados;0;;;;;;;0
 10;Toros /Reproductores;72;;;;;;;72
 11;Toretes /Reproductores;9;;;;;;;9
 12;Bueyes;14;;;;;;;14
-SUB - TOTAL;;138;0;0;0;0;0;4;142
+SUB - TOTAL;;138;0;0;0;72;0;67;133
 ;;;;;;;;;
-TOTAL GENERAL;;2562;49;0;2;63;49;54;2551
+TOTAL GENERAL;;2562;58;0;4;135;112;117;2486
