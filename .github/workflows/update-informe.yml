@@ -1,0 +1,37 @@
+name: Update Informe Ganaderia from Excel
+
+on:
+  push:
+    paths:
+      - "informe/input/*.xls"
+      - "informe/input/*.xlsx"
+      - "informe/scripts/convert_informe.py"
+
+permissions:
+  contents: write
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install deps
+        run: pip install pandas openpyxl xlrd numpy
+
+      - name: Convert Excel -> CSVs (all sheets)
+        run: python informe/scripts/convert_informe.py
+
+      - name: Commit generated data
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git add informe/data -A
+          git commit -m "Auto-update informe CSVs" || echo "No changes"
+          git push
