@@ -6,6 +6,8 @@ on:
       - "palpacion/input/*.xls"
       - "palpacion/input/*.xlsx"
       - "palpacion/scripts/convert.py"
+      - ".github/workflows/update-data.yml"
+  workflow_dispatch: {}
 
 permissions:
   contents: write
@@ -17,21 +19,38 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Show files (debug)
+        run: |
+          echo "== LIST palpacion/input =="
+          ls -la palpacion/input || true
+          echo "== LIST palpacion/scripts =="
+          ls -la palpacion/scripts || true
+          echo "== LIST palpacion/data (before) =="
+          ls -la palpacion/data || true
+
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
       - name: Install deps
-        run: pip install pandas openpyxl "xlrd==2.0.1"
+        run: pip install pandas openpyxl numpy "xlrd==2.0.1"
 
       - name: Convert Excel -> CSV
         run: python palpacion/scripts/convert.py
+
+      - name: Show output (debug)
+        run: |
+          echo "== LIST palpacion/data (after) =="
+          ls -la palpacion/data || true
+          echo "== SHOW fincas.json =="
+          cat palpacion/data/fincas.json || true
 
       - name: Commit generated data
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add palpacion/data -A
+          git status
           git commit -m "Auto-update palpacion CSVs" || echo "No changes"
           git push
