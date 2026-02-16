@@ -1,0 +1,25 @@
+PLASENCIA  TORRES  S,A;;;;;;;;;
+MOVIMIENTO DE GANADO BOVINO ENERO - DICIEMBRE -2026;;;;;;;;;
+No.;Clase De;AÑO;NACIMIEN;COMPRAS;MUERTES;VENTAS;TRANFERENCIA CLASE;;EXITENCIA
+;;INICIAL;TOS;;;;SALIDA;ENTREDA;F I N A L
+;;31/12/2024;(+);(+);(-);(-);(-);(+);31/12/2025
+HATO REPRODUCTIVO;;;;;;;;;
+1;Vacas  Paridas;681;;;;;;49;730
+2;Vacas Secas;324;;;;;49;;275
+3;Novilla Vientre;281;;;1;;;;280
+4;Hembras Descarte;0;;;;;;;0
+SUB - TOTAL;;1286;0;0;1;0;49;49;1285
+GANADO BOVINO MENOR;;;;;;;;;
+5;Crías Machos;292;32;;;;;;324
+6;Crías Hembras;388;17;;;;;1;406
+7;Hembras Levante;458;;;1;63;;;394
+SUB - TOTAL;;1138;49;0;1;63;0;1;1124
+GANADO MACHOS;;;;;;;;;
+8;Novillos;43;;;;;;4;47
+9;Novillos Comprados;0;;;;;;;0
+10;Toros /Reproductores;72;;;;;;;72
+11;Toretes /Reproductores;9;;;;;;;9
+12;Bueyes;14;;;;;;;14
+SUB - TOTAL;;138;0;0;0;0;0;4;142
+;;;;;;;;;
+TOTAL GENERAL;;2562;49;0;2;63;49;54;2551
