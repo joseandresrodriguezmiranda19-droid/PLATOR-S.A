@@ -4,16 +4,22 @@ import json
 import re
 import unicodedata
 import numpy as np
-from datetime import datetime
+from datetime import datetime, date
 import csv as csvmod
 
 INPUT_DIR = Path("informe/input")
 OUTPUT_DIR = Path("informe/data")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# Nombre fijo del Excel (para que sea fácil siempre)
-# Puedes subir .xlsx o .xls, el script busca ambos.
-BASE_NAME = "informe_ganaderia"
+# -----------------------------
+# Utilidades
+# -----------------------------
+def normalize_key(s: str) -> str:
+    s = (s or "").strip().upper()
+    s = unicodedata.normalize("NFD", s)
+    s = "".join(ch for ch in s if unicodedata.category(ch) != "Mn")
+    s = re.sub(r"\s+", " ", s)
+    return s
 
 def slugify(name: str) -> str:
     s = (name or "").strip().lower()
@@ -22,8 +28,45 @@ def slugify(name: str) -> str:
     s = re.sub(r"[^a-z0-9]+", "_", s).strip("_")
     return s[:80] or "sheet"
 
+def parse_date_from_filename(name: str):
+    """
+    Busca fechas tipo YYYY-MM-DD o YYYYMMDD dentro del nombre.
+    Devuelve date o None.
+    """
+    m = re.search(r"(\d{4})-(\d{2})-(\d{2})", name)
+    if m:
+        try:
+            return date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+        except Exception:
+            return None
+
+    m = re.search(r"(\d{4})(\d{2})(\d{2})", name)
+    if m:
+        try:
+            return date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+        except Exception:
+            return None
+
+    return None
+
+def pick_latest_excel(input_dir: Path) -> Path:
+    files = sorted([p for p in input_dir.glob("*") if p.suffix.lower() in [".xls", ".xlsx"]])
+    if not files:
+        raise SystemExit(f"No hay archivos .xls/.xlsx en: {input_dir}")
+
+    scored = []
+    for p in files:
+        d = parse_date_from_filename(p.name)
+        scored.append((d or date(1900, 1, 1), p.name.lower(), p))
+
+    scored.sort()
+    return scored[-1][2]
+
 def fmt_date(v):
-    """Convierte fechas a DD/MM/YYYY (para que el dashboard detecte años/fechas mejor)."""
+    """
+    Normaliza fechas a DD/MM/YYYY (solo cuando detecta fechas).
+    Deja otros valores como texto.
+    """
     if v is None:
         return ""
     if isinstance(v, float) and np.isnan(v):
@@ -32,17 +75,6 @@ def fmt_date(v):
     if isinstance(v, (pd.Timestamp, datetime)):
         d = v.date()
         return f"{d.day:02d}/{d.month:02d}/{d.year:04d}"
-
-    # serial Excel
-    if isinstance(v, (int, float)):
-        x = float(v)
-        if 1 <= x <= 80000:
-            try:
-                ts = pd.to_datetime(x, unit="D", origin="1899-12-30")
-                d = ts.date()
-                return f"{d.day:02d}/{d.month:02d}/{d.year:04d}"
-            except Exception:
-                pass
 
     s = str(v).strip()
     if not s or s.lower() in {"nan", "none"}:
@@ -62,32 +94,41 @@ def read_sheets(path: Path):
         return pd.read_excel(path, sheet_name=None, header=None, engine="xlrd")
     return pd.read_excel(path, sheet_name=None, header=None, engine="openpyxl")
 
-def trim_df(df: pd.DataFrame) -> pd.DataFrame:
-    df = df.copy()
-    df = df.fillna("")
-    # quita filas totalmente vacías
-    df = df.loc[~(df.astype(str).apply(lambda r: "".join(r).strip() == "", axis=1))]
-    if df.empty:
-        return df
-    # quita columnas totalmente vacías
-    df = df.loc[:, ~(df.astype(str).apply(lambda c: "".join(c).strip() == "", axis=0))]
-    return df
+def canonical_filename(sheet_name: str) -> str:
+    """
+    Nombre “amigable” para que tu dashboard detecte el módulo por nombre.
+    Ajusta aquí si tus hojas tienen otros nombres.
+    """
+    k = normalize_key(sheet_name)
 
-def normalize_dates_df(df: pd.DataFrame) -> pd.DataFrame:
-    # aplica fmt_date a todo (seguro, porque todo se guarda como texto)
-    return df.applymap(fmt_date)
+    if "INVENTARIO" in k and "CATEGOR" in k:
+        return "Inventario X Categoria.csv"
+    if "FLUJO" in k and "CATEGOR" in k:
+        return "Flujo de Ganado x Categoria.csv"
+    if ("ENTRADA" in k and "SALIDA" in k) or ("ENTRADAS" in k and "SALIDAS" in k) or ("MOVIMIENTO" in k):
+        return "Inventario Entradas y Salidas.csv"
+    if "NACIM" in k:
+        return "Nacimientos 2026.csv"
+    if "MUERT" in k:
+        return "Muertes 2026.csv"
+    if "DESTETE" in k:
+        return "Destete de Terneros.csv"
+    if ("PROYEC" in k or "PROYECION" in k) and "PART" in k:
+        return "Proyeccion de Partos.csv"
+    if "VENTAS" in k:
+        return "Ventas 2026.csv"
 
-# 1) Buscar el Excel
-xlsx = INPUT_DIR / f"{BASE_NAME}.xlsx"
-xls  = INPUT_DIR / f"{BASE_NAME}.xls"
-if xlsx.exists():
-    src = xlsx
-elif xls.exists():
-    src = xls
-else:
-    raise SystemExit(f"No encontré {BASE_NAME}.xlsx ni {BASE_NAME}.xls en {INPUT_DIR}")
+    # fallback
+    return f"{sheet_name}.csv"
 
-# 2) Leer todas las hojas
+# -----------------------------
+# Proceso principal
+# -----------------------------
+src = pick_latest_excel(INPUT_DIR)
+used_date = parse_date_from_filename(src.name)
+
+print("Usando archivo:", src.name)
+
 sheets = read_sheets(src)
 
 manifest = []
@@ -97,15 +138,12 @@ for sheet_name, raw in sheets.items():
     if raw is None or raw.empty:
         continue
 
-    df = trim_df(raw)
-    if df.empty:
-        continue
+    df = raw.copy().fillna("")
 
-    # normaliza fechas
-    df = normalize_dates_df(df)
+    # Normalizar fechas (evita "YYYY-MM-DD 00:00:00")
+    df = df.applymap(fmt_date)
 
     slug = slugify(sheet_name)
-    # evitar colisión si hay hojas con nombres parecidos
     base_slug = slug
     i = 2
     while slug in seen_slugs:
@@ -117,7 +155,7 @@ for sheet_name, raw in sheets.items():
     df.to_csv(
         out_csv,
         index=False,
-        header=False,          # dejamos el Excel “tal cual”, como reporte
+        header=False,
         sep=";",
         encoding="utf-8",
         quoting=csvmod.QUOTE_MINIMAL
@@ -126,13 +164,22 @@ for sheet_name, raw in sheets.items():
     manifest.append({
         "sheet": sheet_name,
         "slug": slug,
-        "csv": f"informe/data/{slug}.csv",
-        # esto es el “nombre” con el que el dashboard detecta el módulo
-        "fileName": f"{sheet_name}.csv"
+        "csv": f"data/{slug}.csv",                 # relativo a informe/index.html
+        "fileName": canonical_filename(sheet_name) # nombre para detección
     })
 
-# 3) Guardar índice para auto-carga
+# Índice para auto-carga
 with open(OUTPUT_DIR / "sheets.json", "w", encoding="utf-8") as fp:
     json.dump(manifest, fp, ensure_ascii=False, indent=2)
 
-print(f"OK -> {len(manifest)} hojas exportadas a informe/data/*.csv + sheets.json")
+# Meta (no rompe nada, es extra)
+meta = {
+    "source_file": src.name,
+    "source_date": used_date.isoformat() if used_date else None,
+    "generated_at": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+    "sheets_count": len(manifest)
+}
+with open(OUTPUT_DIR / "source.json", "w", encoding="utf-8") as fp:
+    json.dump(meta, fp, ensure_ascii=False, indent=2)
+
+print(f"OK -> {len(manifest)} hojas exportadas en informe/data/ + sheets.json + source.json")
