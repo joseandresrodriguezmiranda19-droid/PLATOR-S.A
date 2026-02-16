@@ -1,4 +1,4 @@
-name: Update Informe Ganaderia from Excel (latest by date)
+name: Update Informe Ganaderia from Excel
 
 on:
   push:
@@ -33,5 +33,5 @@ jobs:
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
           git add informe/data -A
-          git commit -m "Auto-update informe data" || echo "No changes"
+          git commit -m "Auto-update informe CSVs" || echo "No changes"
           git push
