@@ -3,9 +3,9 @@ name: Update Palpacion data from Excel
 on:
   push:
     paths:
-      - "input/*.xls"
-      - "input/*.xlsx"
-      - "scripts/convert.py"
+      - "palpacion/input/*.xls"
+      - "palpacion/input/*.xlsx"
+      - "palpacion/scripts/convert.py"
 
 permissions:
   contents: write
@@ -23,15 +23,15 @@ jobs:
           python-version: "3.11"
 
       - name: Install deps
-        run: pip install pandas openpyxl xlrd
+        run: pip install pandas openpyxl "xlrd==2.0.1"
 
       - name: Convert Excel -> CSV
-        run: python scripts/convert.py
+        run: python palpacion/scripts/convert.py
 
       - name: Commit generated data
         run: |
           git config user.name "github-actions"
           git config user.email "github-actions@github.com"
-          git add data -A
+          git add palpacion/data -A
           git commit -m "Auto-update palpacion CSVs" || echo "No changes"
           git push
