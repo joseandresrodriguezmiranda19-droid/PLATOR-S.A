@@ -6,11 +6,12 @@ import unicodedata
 import numpy as np
 from datetime import datetime
 
-INPUT_DIR = Path("input")
-OUTPUT_DIR = Path("data")
+# === RUTAS (TODO dentro de /palpacion) ===
+INPUT_DIR = Path("palpacion/input")
+OUTPUT_DIR = Path("palpacion/data")
 OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
 
-# Fincas esperadas (según tus nombres fijos en /input)
+# Archivos esperados en palpacion/input (pueden ser .xls o .xlsx)
 MAP = {
     "las_cuchillas": "Las Cuchillas",
     "los_carbonales": "Los Carbonales",
@@ -18,7 +19,7 @@ MAP = {
     "primero_de_mayo": "Primero de Mayo",
 }
 
-# Código "ES-xxx" (solo para asegurar que el dashboard nombre bien la finca en el meta)
+# Código ES-xxx (solo para que el dashboard detecte bien la finca por el meta)
 CODE_MAP = {
     "las_cuchillas": "ES-003",
     "los_carbonales": "ES-005",
@@ -33,10 +34,10 @@ WANT = [
     "estado reprod", "tpreñez", "d.ab", "f. p. p", "uiep", "del"
 ]
 
-# Si quieres que el CSV tenga una columna "Hoja" (útil para depurar)
+# Si quieres ver de qué hoja viene cada fila (útil para depurar)
 INCLUDE_SHEET_COLUMN = True
 
-# Si quieres eliminar duplicados por Número (si te salen repetidos por varias hojas)
+# Si ves duplicados porque hay varias hojas con los mismos animales, cambia a True
 DEDUPE_BY_NUMERO = False
 
 
@@ -49,7 +50,7 @@ def canon(s: str) -> str:
 
 
 def read_excel_sheets(path: Path):
-    """Devuelve dict: {nombre_hoja: DataFrame} con header=None (todo crudo)."""
+    """Devuelve dict: {nombre_hoja: DataFrame} con header=None."""
     suf = path.suffix.lower()
     if suf == ".xls":
         return pd.read_excel(path, sheet_name=None, header=None, engine="xlrd")
@@ -98,7 +99,7 @@ def make_unique(headers):
 
 
 def fmt_excel_date(x):
-    """Devuelve fecha en ISO 'YYYY-MM-DD' cuando se puede, o ''."""
+    """Convierte a ISO 'YYYY-MM-DD' cuando se puede, o ''."""
     if x is None:
         return ""
     if isinstance(x, float) and np.isnan(x):
@@ -143,14 +144,13 @@ def normalize_date_columns(df: pd.DataFrame) -> pd.DataFrame:
     """Normaliza columnas de fecha por nombre aproximado."""
     for col in list(df.columns):
         ck = canon(col)
-        # cubre: F. Preñ, Fecha Preñez, F. P. P, UIEP, etc (si fueran fechas)
-        if ("fpre" in ck) or ("fpp" in ck) or ("fechap" in ck) or ("uiep" in ck) or ("fechapren" in ck):
+        if ("fpre" in ck) or ("fpp" in ck) or ("uiep" in ck) or ("fechapren" in ck) or ("fechap" in ck):
             df[col] = df[col].apply(fmt_excel_date)
     return df
 
 
 def extract_table_from_sheet(raw: pd.DataFrame, sheet_name: str):
-    """Devuelve (meta_lines, data_df) o None si no detecta tabla."""
+    """Devuelve (meta_lines, data_df) o lanza excepción si no detecta tabla."""
     hidx = find_header_idx(raw)
 
     meta_lines = [row_text(raw.iloc[i].tolist()) for i in range(hidx)]
@@ -183,7 +183,7 @@ index = {}
 
 for slug, label in MAP.items():
     f_xlsx = INPUT_DIR / f"{slug}.xlsx"
-    f_xls  = INPUT_DIR / f"{slug}.xls"
+    f_xls = INPUT_DIR / f"{slug}.xls"
 
     if f_xlsx.exists():
         f = f_xlsx
@@ -192,7 +192,7 @@ for slug, label in MAP.items():
     else:
         continue
 
-    sheets = read_excel_sheets(f)  # dict hoja -> df
+    sheets = read_excel_sheets(f)
     all_data = []
     meta_base = None
     used_sheets = []
@@ -213,10 +213,10 @@ for slug, label in MAP.items():
 
     data_all = pd.concat(all_data, ignore_index=True)
 
-    # Normaliza fechas (para que el dashboard calcule Próximos Partos, etc.)
+    # normaliza fechas (para que el dashboard calcule Próximos Partos, etc.)
     data_all = normalize_date_columns(data_all)
 
-    # Quita filas de totales si vienen dentro de la tabla
+    # quita filas de totales si vienen dentro de la tabla
     try:
         mask_total = data_all.astype(str).apply(
             lambda r: ("total animales" in " ".join(r).lower()) or ("total:" in " ".join(r).lower()),
@@ -226,9 +226,8 @@ for slug, label in MAP.items():
     except Exception:
         pass
 
-    # Deduplicar por Número (si se repite por varias hojas)
+    # deduplicar por Número (si se repite por varias hojas)
     if DEDUPE_BY_NUMERO:
-        # intenta encontrar columna que parezca "Número"
         num_col = None
         for c in data_all.columns:
             if canon(c) in {"numero", "número", "no", "no.", "numeroanimal", "numerodelanimal"}:
@@ -237,10 +236,10 @@ for slug, label in MAP.items():
         if num_col:
             data_all = data_all.drop_duplicates(subset=[num_col], keep="first")
 
-    # Meta: fuerza ES-xxx - FINCA (para que el dashboard lo detecte)
+    # Meta final: fuerza ES-xxx - FINCA (para que el dashboard la detecte)
     meta_lines_final = meta_base[:] if meta_base else []
     meta_lines_final = [ln for ln in meta_lines_final if not re.search(r"ES-\d+\s*-\s*", ln, re.I)]
-    meta_lines_final.insert(0, f"{CODE_MAP.get(slug,'ES-001')} - {label.upper()}")
+    meta_lines_final.insert(0, f"{CODE_MAP.get(slug, 'ES-001')} - {label.upper()}")
 
     if used_sheets:
         meta_lines_final.append(f"Hojas incluidas: {', '.join(used_sheets)}")
@@ -249,11 +248,18 @@ for slug, label in MAP.items():
     with open(out_csv, "w", encoding="utf-8", newline="") as fp:
         for ln in meta_lines_final:
             fp.write(ln + "\n")
+        # IMPORTANTE: en fincas.json guardamos ruta relativa al dashboard /palpacion/
+        # Por eso acá NO ponemos 'palpacion/' en la ruta interna del json.
         data_all.to_csv(fp, index=False, sep=";", encoding="utf-8")
 
-    index[slug] = {"label": label, "csv": f"data/{slug}.csv", "source": f.name}
+    # Guardamos rutas RELATIVAS A /palpacion/ (porque el dashboard vive allí)
+    index[slug] = {
+        "label": label,
+        "csv": f"data/{slug}.csv",
+        "source": f.name
+    }
 
 with open(OUTPUT_DIR / "fincas.json", "w", encoding="utf-8") as fp:
     json.dump(index, fp, ensure_ascii=False, indent=2)
 
-print("OK -> data/*.csv y data/fincas.json (multi-hoja)")
+print("OK -> palpacion/data/*.csv y palpacion/data/fincas.json (multi-hoja)")
