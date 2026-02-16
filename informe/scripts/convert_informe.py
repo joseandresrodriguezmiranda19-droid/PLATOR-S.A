@@ -30,9 +30,13 @@ def slugify(name: str) -> str:
 
 def parse_date_from_filename(name: str):
     """
-    Busca fechas tipo YYYY-MM-DD o YYYYMMDD dentro del nombre.
+    Detecta fechas en el nombre del archivo en estos formatos:
+    - YYYY-MM-DD
+    - YYYYMMDD
+    - DD-MM-YYYY (también DD/MM/YYYY o DD.MM.YYYY)
     Devuelve date o None.
     """
+    # 1) YYYY-MM-DD
     m = re.search(r"(\d{4})-(\d{2})-(\d{2})", name)
     if m:
         try:
@@ -40,10 +44,22 @@ def parse_date_from_filename(name: str):
         except Exception:
             return None
 
+    # 2) YYYYMMDD
     m = re.search(r"(\d{4})(\d{2})(\d{2})", name)
     if m:
         try:
             return date(int(m.group(1)), int(m.group(2)), int(m.group(3)))
+        except Exception:
+            return None
+
+    # 3) DD-MM-YYYY / DD/MM/YYYY / DD.MM.YYYY
+    m = re.search(r"(\d{2})[-/\.](\d{2})[-/\.](\d{4})", name)
+    if m:
+        try:
+            d = int(m.group(1))
+            mo = int(m.group(2))
+            y = int(m.group(3))
+            return date(y, mo, d)
         except Exception:
             return None
 
@@ -57,6 +73,7 @@ def pick_latest_excel(input_dir: Path) -> Path:
     scored = []
     for p in files:
         d = parse_date_from_filename(p.name)
+        # si no trae fecha, lo manda al “pasado” para que no gane
         scored.append((d or date(1900, 1, 1), p.name.lower(), p))
 
     scored.sort()
@@ -64,8 +81,8 @@ def pick_latest_excel(input_dir: Path) -> Path:
 
 def fmt_date(v):
     """
-    Normaliza fechas a DD/MM/YYYY (solo cuando detecta fechas).
-    Deja otros valores como texto.
+    Normaliza fechas a DD/MM/YYYY cuando detecta formatos comunes.
+    Evita que quede como "YYYY-MM-DD 00:00:00".
     """
     if v is None:
         return ""
@@ -118,7 +135,6 @@ def canonical_filename(sheet_name: str) -> str:
     if "VENTAS" in k:
         return "Ventas 2026.csv"
 
-    # fallback
     return f"{sheet_name}.csv"
 
 # -----------------------------
@@ -172,7 +188,7 @@ for sheet_name, raw in sheets.items():
 with open(OUTPUT_DIR / "sheets.json", "w", encoding="utf-8") as fp:
     json.dump(manifest, fp, ensure_ascii=False, indent=2)
 
-# Meta (no rompe nada, es extra)
+# Meta extra (opcional)
 meta = {
     "source_file": src.name,
     "source_date": used_date.isoformat() if used_date else None,
