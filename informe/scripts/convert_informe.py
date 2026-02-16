@@ -100,8 +100,8 @@ for sheet_name, raw in sheets.items():
     df = raw.copy()
     df = df.fillna("")
 
-    # Normalizar fechas (sin tocar números normales)
-    df = df.applymap(fmt_date)
+    # Normalizar fechas (sin tocar números normales) - compatible con pandas nuevo
+    df = df.apply(lambda col: col.map(fmt_date))
 
     slug = slugify(sheet_name)
     base_slug = slug
