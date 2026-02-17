@@ -12,10 +12,10 @@
     "fileName": "Inventario X Categoria.csv"
   },
   {
-    "sheet": "1239",
-    "slug": "1239",
-    "csv": "data/1239.csv",
-    "fileName": "1239.csv"
+    "sheet": "Muertes-2026",
+    "slug": "muertes_2026",
+    "csv": "data/muertes_2026.csv",
+    "fileName": "Muertes 2026.csv"
   },
   {
     "sheet": "Nacimientos-2026",
