@@ -1,12 +1,14 @@
 <!DOCTYPE html>
-<html lang="es"><head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Informe Ganadería PLATOR S.A.</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
@@ -58,7 +60,7 @@
   animation: chartIn 520ms cubic-bezier(.2,.8,.2,1) both;
 }
 </style>
-<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.mb-1{margin-bottom:0.25rem}.mb-2{margin-bottom:0.5rem}.mb-4{margin-bottom:1rem}.mb-8{margin-bottom:2rem}.mr-3{margin-right:0.75rem}.mt-1{margin-top:0.25rem}.mt-3{margin-top:0.75rem}.mt-auto{margin-top:auto}.mb-3{margin-bottom:0.75rem}.mt-2{margin-top:0.5rem}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-16{height:4rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-72{height:18rem}.h-screen{height:100vh}.h-\[360px\]{height:360px}.h-\[320px\]{height:320px}.h-\[380px\]{height:380px}.w-16{width:4rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-72{width:18rem}.w-full{width:100%}.min-w-\[180px\]{min-width:180px}.min-w-\[220px\]{min-width:220px}.min-w-full{min-width:100%}.flex-1{flex:1 1 0%}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-y-2 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.5rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.divide-y > :not([hidden]) ~ :not([hidden]){--tw-divide-y-reverse:0;border-top-width:calc(1px * calc(1 - var(--tw-divide-y-reverse)));border-bottom-width:calc(1px * var(--tw-divide-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-x-auto{overflow-x:auto}.overflow-y-auto{overflow-y:auto}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.rounded-2xl{border-radius:1rem}.border{border-width:1px}.border-b{border-bottom-width:1px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-slate-200{--tw-border-opacity:1;border-color:rgb(226 232 240 / var(--tw-border-opacity, 1))}.border-slate-800{--tw-border-opacity:1;border-color:rgb(30 41 59 / var(--tw-border-opacity, 1))}.border-slate-800\/60{border-color:rgb(30 41 59 / 0.6)}.border-slate-200\/70{border-color:rgb(226 232 240 / 0.7)}.border-slate-100{--tw-border-opacity:1;border-color:rgb(241 245 249 / var(--tw-border-opacity, 1))}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-slate-50{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.bg-slate-950\/30{background-color:rgb(2 6 23 / 0.3)}.bg-transparent{background-color:transparent}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-gradient-to-b{background-image:linear-gradient(to bottom, var(--tw-gradient-stops))}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.from-slate-50{--tw-gradient-from:#f8fafc var(--tw-gradient-from-position);--tw-gradient-to:rgb(248 250 252 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-slate-900{--tw-gradient-from:#0f172a var(--tw-gradient-from-position);--tw-gradient-to:rgb(15 23 42 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-blue-50{--tw-gradient-to:rgb(239 246 255 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #eff6ff var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-slate-100{--tw-gradient-to:#f1f5f9 var(--tw-gradient-to-position)}.to-slate-950{--tw-gradient-to:#020617 var(--tw-gradient-to-position)}.p-4{padding:1rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.p-5{padding:1.25rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.pt-2{padding-top:0.5rem}.pb-8{padding-bottom:2rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[10px\]{font-size:10px}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.text-2xl{font-size:1.5rem;line-height:2rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.leading-relaxed{line-height:1.625}.tracking-tight{letter-spacing:-0.025em}.tracking-widest{letter-spacing:0.1em}.tracking-wide{letter-spacing:0.025em}.text-blue-400{--tw-text-opacity:1;color:rgb(96 165 250 / var(--tw-text-opacity, 1))}.text-blue-600{--tw-text-opacity:1;color:rgb(37 99 235 / var(--tw-text-opacity, 1))}.text-slate-100{--tw-text-opacity:1;color:rgb(241 245 249 / var(--tw-text-opacity, 1))}.text-slate-200{--tw-text-opacity:1;color:rgb(226 232 240 / var(--tw-text-opacity, 1))}.text-slate-300{--tw-text-opacity:1;color:rgb(203 213 225 / var(--tw-text-opacity, 1))}.text-slate-400{--tw-text-opacity:1;color:rgb(148 163 184 / var(--tw-text-opacity, 1))}.text-slate-400\/80{color:rgb(148 163 184 / 0.8)}.text-slate-500{--tw-text-opacity:1;color:rgb(100 116 139 / var(--tw-text-opacity, 1))}.text-slate-800{--tw-text-opacity:1;color:rgb(30 41 59 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-emerald-600{--tw-text-opacity:1;color:rgb(5 150 105 / var(--tw-text-opacity, 1))}.text-rose-600{--tw-text-opacity:1;color:rgb(225 29 72 / var(--tw-text-opacity, 1))}.text-slate-700{--tw-text-opacity:1;color:rgb(51 65 85 / var(--tw-text-opacity, 1))}.opacity-20{opacity:0.2}.opacity-50{opacity:0.5}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-blue-200{--tw-shadow-color:#bfdbfe;--tw-shadow:var(--tw-shadow-colored)}.outline-none{outline:2px solid transparent;outline-offset:2px}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.hover\:border-slate-700:hover{--tw-border-opacity:1;border-color:rgb(51 65 85 / var(--tw-border-opacity, 1))}.hover\:bg-blue-700:hover{--tw-bg-opacity:1;background-color:rgb(29 78 216 / var(--tw-bg-opacity, 1))}.hover\:bg-white\/5:hover{background-color:rgb(255 255 255 / 0.05)}.hover\:bg-slate-50:hover{--tw-bg-opacity:1;background-color:rgb(248 250 252 / var(--tw-bg-opacity, 1))}.hover\:underline:hover{-webkit-text-decoration-line:underline;text-decoration-line:underline}.focus\:ring-2:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-blue-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(59 130 246 / var(--tw-ring-opacity, 1))}@media (min-width: 768px){.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}@media (min-width: 1024px){.lg\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}}@media (min-width: 1280px){.xl\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.xl\:grid-cols-4{grid-template-columns:repeat(4, minmax(0, 1fr))}}</style></head>
+</head>
 
 <body class="flex h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
 
@@ -71,34 +73,34 @@
 
     <nav class="flex-1 p-4 space-y-2 overflow-y-auto sidebar-scroll">
   <div class="pt-2"><p class="text-[10px] font-bold text-slate-400/80 uppercase tracking-widest px-3 mb-2">Módulos</p></div>
-  <button id="nav-inventario_general" onclick="switchModule('inventario_general')" class="sidebar-item w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
+  <button id="nav-inventario_general" onclick="switchModule('inventario_general')" class="sidebar-item active w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18" />
         </svg>
         INVENTARIO X CATEGORÍA
       </button>
   <button id="nav-flujo_ganado_categoria" onclick="switchModule('flujo_ganado_categoria')" class="sidebar-item w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16M7 6v12"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16M7 6v12" />
         </svg>
         FLUJO DE GANADO POR CATEGORÍA
       </button>
   <button id="nav-inventario_movimiento" onclick="switchModule('inventario_movimiento')" class="sidebar-item w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M5 19a9 9 0 0114-14"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M5 19a9 9 0 0114-14" />
         </svg>
         INVENTARIO: ENTRADAS Y SALIDAS
       </button>
   <button id="nav-ventas" onclick="switchModule('ventas')" class="sidebar-item w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3v1H7a1 1 0 000 2h2v1c0 1.657 1.343 3 3 3s3-1.343 3-3v-1h2a1 1 0 100-2h-2v-1c0-1.657-1.343-3-3-3z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3v1H7a1 1 0 000 2h2v1c0 1.657 1.343 3 3 3s3-1.343 3-3v-1h2a1 1 0 100-2h-2v-1c0-1.657-1.343-3-3-3z" />
         </svg>
         VENTAS 2026
       </button>
   <div class="pt-2"><p class="text-[10px] font-bold text-slate-400/80 uppercase tracking-widest px-3 mb-2">Reproducción</p></div>
   <button id="nav-nacimientos" onclick="switchModule('nacimientos')" class="sidebar-item w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6" />
         </svg>
         NACIMIENTOS 2026
       </button>
@@ -108,7 +110,7 @@
         </svg>
         PROYECCIÓN DE PARTOS
       </button>
-  <button id="nav-destete" onclick="switchModule('destete')" class="sidebar-item w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors active">
+  <button id="nav-destete" onclick="switchModule('destete')" class="sidebar-item w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-3.866 0-7 1.79-7 4v4h14v-4c0-2.21-3.134-4-7-4zm0 0V4m0 0H9m3 0h3"></path>
         </svg>
@@ -117,8 +119,8 @@
   <div class="pt-2"><p class="text-[10px] font-bold text-slate-400/80 uppercase tracking-widest px-3 mb-2">Mortalidad</p></div>
   <button id="nav-muertes" onclick="switchModule('muertes')" class="sidebar-item w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z"></path>
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0121 17.5a12.083 12.083 0 01-9 3.5 12.083 12.083 0 01-9-3.5 12.083 12.083 0 012.84-6.922L12 14z"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0121 17.5a12.083 12.083 0 01-9 3.5 12.083 12.083 0 01-9-3.5 12.083 12.083 0 012.84-6.922L12 14z" />
         </svg>
         MUERTES 2026
       </button>
@@ -127,8 +129,8 @@
     <div class="p-4 border-t border-slate-800 bg-slate-950/30">
       <div id="dropZone" class="drop-zone p-4 rounded-xl text-center cursor-pointer">
         <p class="text-xs font-semibold text-slate-200">Actualizar Datos</p>
-        <p class="text-[10px] text-slate-400/80 mt-1">Sube archivos CSV (puedes subir varios)</p>
-        <input type="file" id="fileInput" class="hidden" accept=".csv" multiple="">
+        <p class="text-[10px] text-slate-400/80 mt-1">Sube 1 Excel (.xls/.xlsx) o varios CSV</p>
+        <input type="file" id="fileInput" class="hidden" accept=".csv,.xls,.xlsx" multiple />
       </div>
       <p class="text-[10px] text-slate-400 mt-3 leading-relaxed">
         Consejo: sube los 7 CSV juntos para habilitar todos los módulos. El dashboard detecta automáticamente cada reporte.
@@ -140,12 +142,14 @@
   <main class="flex-1 overflow-y-auto p-8">
     <header class="mb-8 flex justify-between items-start">
       <div>
-        <h2 id="mainTitle" class="text-3xl font-bold text-slate-800">Destete de Terneros</h2>
-        <p id="mainSubtitle" class="text-slate-500">Peso de nacimiento vs destete (por mes / sexo)</p>
+        <h2 id="mainTitle" class="text-3xl font-bold text-slate-800">Inventario General</h2>
+        <p id="mainSubtitle" class="text-slate-500">Comparativo por categoría (Zonas / Años)</p>
       </div>
       <div class="flex flex-col items-end gap-3 no-print">
-        <div id="lastUpdate" class="text-xs text-slate-400 bg-white px-3 py-1 rounded-full border border-slate-200">Actualizado: 13/2/2026, 8:39:47</div>
-        <button id="saveBtn" class="btn-action bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold text-sm shadow-lg shadow-blue-200 flex items-center gap-2">
+        <div id="lastUpdate" class="text-xs text-slate-400 bg-white px-3 py-1 rounded-full border border-slate-200">
+          Esperando datos...
+        </div>
+        <button id="saveBtn" class="btn-action hidden bg-blue-600 hover:bg-blue-700 text-white px-6 py-2 rounded-lg font-bold text-sm shadow-lg shadow-blue-200 flex items-center gap-2">
           <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
           </svg>
@@ -155,42 +159,44 @@
     </header>
 
     <!-- DASHBOARD GRID -->
-    <div id="dashboardContent" class="space-y-6 opacity-50 pointer-events-none section-fade-in">
+    <div id="dashboardContent" class="space-y-6 opacity-50 pointer-events-none">
 
       <!-- FILTERS BAR -->
       <div class="bg-white p-4 rounded-xl border border-slate-200 flex flex-wrap gap-4 items-center no-print">
-        <div id="fincaFilterWrap" class="flex flex-col gap-1 hidden">
+        <div id="fincaFilterWrap" class="flex flex-col gap-1">
           <label class="text-[10px] font-bold text-slate-400 uppercase">Filtrar por Finca/Zona</label>
-          <select id="fincaFilter" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-[220px]"><option value="all">Todas</option><option value="El Castillo">El Castillo</option><option value="Las Cuchillas">Las Cuchillas</option><option value="Las Guayabas">Las Guayabas</option><option value="Los Carbonales">Los Carbonales</option><option value="Los Chaguites">Los Chaguites</option><option value="Monte Fresco">Monte Fresco</option><option value="PRIMERO MAYO">PRIMERO MAYO</option></select>
+          <select id="fincaFilter" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-[220px]">
+          </select>
         </div>
 
         
         <div id="categoriaFilterWrap" class="flex flex-col gap-1 hidden">
           <label class="text-[10px] font-bold text-slate-400 uppercase">Categoría</label>
           <select id="categoriaFilter" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-[220px]">
-            <option value="all">Todas</option>
-            <option value="HEMBRAS">Hembras</option>
+            <option value="HEMBRAS" selected>Hembras</option>
             <option value="MACHOS">Machos</option>
             <option value="CAFE">Venta de Café</option>
           </select>
         </div>
 
-        <div id="yearFilters" class="flex gap-4 hidden">
+        <div id="yearFilters" class="flex gap-4">
           <div class="flex flex-col gap-1">
             <label class="text-[10px] font-bold text-slate-400 uppercase">Año Inicio</label>
-            <select id="yearStartFilter" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"><option value="2025">2025</option><option value="2026">2026</option></select>
+            <select id="yearStartFilter" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"></select>
           </div>
           <div class="flex flex-col gap-1">
             <label class="text-[10px] font-bold text-slate-400 uppercase">Año Fin</label>
-            <select id="yearEndFilter" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"><option value="2025">2025</option><option value="2026">2026</option></select>
+            <select id="yearEndFilter" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500"></select>
           </div></div>
 
         <div id="monthFilterWrap" class="flex flex-col gap-1 hidden">
           <label class="text-[10px] font-bold text-slate-400 uppercase">Mes</label>
-          <select id="monthFilter" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-[180px]"><option value="all">Todos</option><option value="Enero">Enero</option><option value="Febrero">Febrero</option><option value="Marzo">Marzo</option><option value="Abril">Abril</option><option value="Mayo">Mayo</option><option value="Junio">Junio</option><option value="Julio">Julio</option><option value="Agosto">Agosto</option><option value="Septiembre">Septiembre</option><option value="Octubre">Octubre</option><option value="Noviembre">Noviembre</option><option value="Diciembre">Diciembre</option></select>
+          <select id="monthFilter" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-[180px]">
+            <option value="all">Todos</option>
+          </select>
         </div>
 
-        <div id="sexoFilterWrap" class="flex flex-col gap-1">
+        <div id="sexoFilterWrap" class="flex flex-col gap-1 hidden">
           <label class="text-[10px] font-bold text-slate-400 uppercase">Sexo</label>
           <select id="sexoFilter" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-[180px]">
             <option value="todos">Todos</option>
@@ -208,7 +214,7 @@
       <div id="kpiContainer" class="grid grid-cols-1 md:grid-cols-3 gap-6"></div>
 
       <!-- SECTION CONTENT (para módulos que renderizan todo en un solo contenedor) -->
-      <div id="sectionContent" class="space-y-6"><p class="text-center text-slate-400">No hay datos disponibles para mostrar.</p></div>
+      <div id="sectionContent" class="space-y-6 hidden"></div>
 
       <!-- CHARTS SECTION -->
       <div id="chartsContainer" class="space-y-6"></div>
@@ -219,11 +225,15 @@
       <svg class="w-16 h-16 mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
       </svg>
-      <p id="placeholderText" class="text-center px-6">Sube el archivo CSV de “Destete de Terneros” para comenzar.</p>
+      <p id="placeholderText" class="text-center px-6">Sube uno o varios archivos CSV para visualizar el reporte.</p>
     </div>
   </main>
 
-  <script id="dataContainer">window.APP_DATA = {"destete":[],"destete_meta":{"totalTerneros":0,"pesoDesteteProm":0,"pesoNacimProm":0},"ventas":[{"finca":"General","anio":2026,"mes":"Enero","tipo":"HEMBRAS","descripcion":"Vaquillas","cantidad":16,"unidad":"Cbzs","kilos":4461,"precio_kg":83,"importe":370263},{"finca":"General","anio":2026,"mes":"Enero","tipo":"HEMBRAS","descripcion":"Vaquillas","cantidad":5,"unidad":"Cbzs","kilos":1452,"precio_kg":83,"importe":120540},{"finca":"General","anio":2026,"mes":"Enero","tipo":"HEMBRAS","descripcion":"Vaquillas","cantidad":4,"unidad":"Cbzs","kilos":942,"precio_kg":83,"importe":78186},{"finca":"General","anio":2026,"mes":"Enero","tipo":"HEMBRAS","descripcion":"Vaquillas","cantidad":10,"unidad":"Cbzs","kilos":2746,"precio_kg":83,"importe":227918},{"finca":"General","anio":2026,"mes":"Enero","tipo":"HEMBRAS","descripcion":"Vaquillas","cantidad":28,"unidad":"Cbzs","kilos":6832,"precio_kg":83,"importe":567056},{"finca":"General","anio":2026,"mes":"Enero","tipo":"CAFE","descripcion":"Café Pergamino","cantidad":362,"unidad":"Libras","kilos":0,"precio_kg":50.26,"importe":18194}],"flujo_ganado_categoria":[{"finca":"General","anio":2025,"grupo":"HATO REPRODUCTIVO","codigo":"1","categoria":"Vacas Paridas","inicial":681,"nacimientos":0,"compras":0,"muertes":0,"ventas":0,"transf_salida":0,"transf_entrada":49,"final":730},{"finca":"General","anio":2025,"grupo":"HATO REPRODUCTIVO","codigo":"2","categoria":"Vacas Secas","inicial":324,"nacimientos":0,"compras":0,"muertes":0,"ventas":0,"transf_salida":49,"transf_entrada":0,"final":275},{"finca":"General","anio":2025,"grupo":"HATO REPRODUCTIVO","codigo":"3","categoria":"Novilla Vientre","inicial":281,"nacimientos":0,"compras":0,"muertes":1,"ventas":0,"transf_salida":0,"transf_entrada":0,"final":280},{"finca":"General","anio":2025,"grupo":"HATO REPRODUCTIVO","codigo":"4","categoria":"Hembras Descarte","inicial":0,"nacimientos":0,"compras":0,"muertes":0,"ventas":0,"transf_salida":0,"transf_entrada":0,"final":0},{"finca":"General","anio":2025,"grupo":"HATO REPRODUCTIVO","codigo":"SUB - TOTAL","categoria":"SUB - TOTAL","inicial":1286,"nacimientos":0,"compras":0,"muertes":1,"ventas":0,"transf_salida":49,"transf_entrada":49,"final":1285},{"finca":"General","anio":2025,"grupo":"GANADO BOVINO MENOR","codigo":"5","categoria":"Crías Machos","inicial":292,"nacimientos":32,"compras":0,"muertes":0,"ventas":0,"transf_salida":0,"transf_entrada":0,"final":324},{"finca":"General","anio":2025,"grupo":"GANADO BOVINO MENOR","codigo":"6","categoria":"Crías Hembras","inicial":388,"nacimientos":17,"compras":0,"muertes":0,"ventas":0,"transf_salida":0,"transf_entrada":1,"final":406},{"finca":"General","anio":2025,"grupo":"GANADO BOVINO MENOR","codigo":"7","categoria":"Hembras Levante","inicial":458,"nacimientos":0,"compras":0,"muertes":1,"ventas":63,"transf_salida":0,"transf_entrada":0,"final":394},{"finca":"General","anio":2025,"grupo":"GANADO BOVINO MENOR","codigo":"SUB - TOTAL","categoria":"SUB - TOTAL","inicial":1138,"nacimientos":49,"compras":0,"muertes":1,"ventas":63,"transf_salida":0,"transf_entrada":1,"final":1124},{"finca":"General","anio":2025,"grupo":"GANADO MACHOS","codigo":"8","categoria":"Novillos","inicial":43,"nacimientos":0,"compras":0,"muertes":0,"ventas":0,"transf_salida":0,"transf_entrada":4,"final":47},{"finca":"General","anio":2025,"grupo":"GANADO MACHOS","codigo":"9","categoria":"Novillos Comprados","inicial":0,"nacimientos":0,"compras":0,"muertes":0,"ventas":0,"transf_salida":0,"transf_entrada":0,"final":0},{"finca":"General","anio":2025,"grupo":"GANADO MACHOS","codigo":"10","categoria":"Toros /Reproductores","inicial":72,"nacimientos":0,"compras":0,"muertes":0,"ventas":0,"transf_salida":0,"transf_entrada":0,"final":72},{"finca":"General","anio":2025,"grupo":"GANADO MACHOS","codigo":"11","categoria":"Toretes /Reproductores","inicial":9,"nacimientos":0,"compras":0,"muertes":0,"ventas":0,"transf_salida":0,"transf_entrada":0,"final":9},{"finca":"General","anio":2025,"grupo":"GANADO MACHOS","codigo":"12","categoria":"Bueyes","inicial":14,"nacimientos":0,"compras":0,"muertes":0,"ventas":0,"transf_salida":0,"transf_entrada":0,"final":14},{"finca":"General","anio":2025,"grupo":"GANADO MACHOS","codigo":"SUB - TOTAL","categoria":"SUB - TOTAL","inicial":138,"nacimientos":0,"compras":0,"muertes":0,"ventas":0,"transf_salida":0,"transf_entrada":4,"final":142},{"finca":"General","anio":2025,"grupo":"GANADO MACHOS","codigo":"TOTAL GENERAL","categoria":"TOTAL GENERAL","inicial":2562,"nacimientos":49,"compras":0,"muertes":2,"ventas":63,"transf_salida":49,"transf_entrada":54,"final":2551}],"inventario_movimiento":[{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Paridas","tipo":"Inventario Inicial","valor":3},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Secas","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novilla Vientre","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Machos","tipo":"Inventario Inicial","valor":1},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Hembras","tipo":"Inventario Inicial","valor":2},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Hembras Levante","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novillos Desarrollo","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toros","tipo":"Inventario Inicial","valor":1},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toretes","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Bueyes","tipo":"Inventario Inicial","valor":2},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Existencia Final","tipo":"Inventario Inicial","valor":9},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Paridas","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Secas","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novilla Vientre","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Machos","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Hembras","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Hembras Levante","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novillos Desarrollo","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toros","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toretes","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Bueyes","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Existencia Final","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Paridas","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Secas","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novilla Vientre","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Machos","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Hembras","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Hembras Levante","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novillos Desarrollo","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toros","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toretes","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Bueyes","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Existencia Final","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Paridas","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Secas","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novilla Vientre","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Machos","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Hembras","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Hembras Levante","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novillos Desarrollo","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toros","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toretes","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Bueyes","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Existencia Final","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Paridas","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Secas","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novilla Vientre","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Machos","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Hembras","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Hembras Levante","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novillos Desarrollo","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toros","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toretes","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Bueyes","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Existencia Final","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Paridas","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Secas","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novilla Vientre","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Machos","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Hembras","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Hembras Levante","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novillos Desarrollo","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toros","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toretes","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Bueyes","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Existencia Final","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Paridas","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Secas","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novilla Vientre","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Machos","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Hembras","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Hembras Levante","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novillos Desarrollo","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toros","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toretes","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Bueyes","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Existencia Final","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Paridas","tipo":"Inventario Final","valor":3},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Vacas Secas","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novilla Vientre","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Machos","tipo":"Inventario Final","valor":1},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Crías Hembras","tipo":"Inventario Final","valor":2},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Hembras Levante","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Novillos Desarrollo","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toros","tipo":"Inventario Final","valor":1},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Toretes","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Bueyes","tipo":"Inventario Final","valor":2},{"anio":2026,"finca":"El C A S T I Ll O","categoria":"Existencia Final","tipo":"Inventario Final","valor":9},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Paridas","tipo":"Inventario Inicial","valor":64},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Secas","tipo":"Inventario Inicial","valor":12},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novilla Vientre","tipo":"Inventario Inicial","valor":29},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Machos","tipo":"Inventario Inicial","valor":22},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Hembras","tipo":"Inventario Inicial","valor":42},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Hembras Levante","tipo":"Inventario Inicial","valor":43},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novillos Desarrollo","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toros","tipo":"Inventario Inicial","valor":5},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toretes","tipo":"Inventario Inicial","valor":1},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Bueyes","tipo":"Inventario Inicial","valor":2},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Existencia Final","tipo":"Inventario Inicial","valor":220},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Paridas","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Secas","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novilla Vientre","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Machos","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Hembras","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Hembras Levante","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novillos Desarrollo","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toros","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toretes","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Bueyes","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Existencia Final","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Paridas","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Secas","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novilla Vientre","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Machos","tipo":"Nacimiento","valor":3},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Hembras","tipo":"Nacimiento","valor":1},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Hembras Levante","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novillos Desarrollo","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toros","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toretes","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Bueyes","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Existencia Final","tipo":"Nacimiento","valor":4},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Paridas","tipo":"Entradas","valor":4},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Secas","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novilla Vientre","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Machos","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Hembras","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Hembras Levante","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novillos Desarrollo","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toros","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toretes","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Bueyes","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Existencia Final","tipo":"Entradas","valor":4},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Paridas","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Secas","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novilla Vientre","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Machos","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Hembras","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Hembras Levante","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novillos Desarrollo","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toros","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toretes","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Bueyes","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Existencia Final","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Paridas","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Secas","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novilla Vientre","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Machos","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Hembras","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Hembras Levante","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novillos Desarrollo","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toros","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toretes","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Bueyes","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Existencia Final","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Paridas","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Secas","tipo":"Saladas","valor":4},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novilla Vientre","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Machos","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Hembras","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Hembras Levante","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novillos Desarrollo","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toros","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toretes","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Bueyes","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Existencia Final","tipo":"Saladas","valor":4},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Paridas","tipo":"Inventario Final","valor":68},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Vacas Secas","tipo":"Inventario Final","valor":8},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novilla Vientre","tipo":"Inventario Final","valor":29},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Machos","tipo":"Inventario Final","valor":25},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Crías Hembras","tipo":"Inventario Final","valor":43},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Hembras Levante","tipo":"Inventario Final","valor":43},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Novillos Desarrollo","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toros","tipo":"Inventario Final","valor":5},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Toretes","tipo":"Inventario Final","valor":1},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Bueyes","tipo":"Inventario Final","valor":2},{"anio":2026,"finca":"Las C U C H I Ll A S","categoria":"Existencia Final","tipo":"Inventario Final","valor":224},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Paridas","tipo":"Inventario Inicial","valor":2},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Secas","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novilla Vientre","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Machos","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Hembras","tipo":"Inventario Inicial","valor":2},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Hembras Levante","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novillos Desarrollo","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toros","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toretes","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Bueyes","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Existencia Final","tipo":"Inventario Inicial","valor":4},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Paridas","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Secas","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novilla Vientre","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Machos","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Hembras","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Hembras Levante","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novillos Desarrollo","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toros","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toretes","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Bueyes","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Existencia Final","tipo":"Compras","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Paridas","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Secas","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novilla Vientre","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Machos","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Hembras","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Hembras Levante","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novillos Desarrollo","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toros","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toretes","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Bueyes","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Existencia Final","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Paridas","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Secas","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novilla Vientre","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Machos","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Hembras","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Hembras Levante","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novillos Desarrollo","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toros","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toretes","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Bueyes","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Existencia Final","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Paridas","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Secas","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novilla Vientre","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Machos","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Hembras","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Hembras Levante","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novillos Desarrollo","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toros","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toretes","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Bueyes","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Existencia Final","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Paridas","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Secas","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novilla Vientre","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Machos","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Hembras","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Hembras Levante","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novillos Desarrollo","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toros","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toretes","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Bueyes","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Existencia Final","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Paridas","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Secas","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novilla Vientre","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Machos","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Hembras","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Hembras Levante","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novillos Desarrollo","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toros","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toretes","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Bueyes","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Existencia Final","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Paridas","tipo":"Inventario Final","valor":2},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Vacas Secas","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novilla Vientre","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Machos","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Crías Hembras","tipo":"Inventario Final","valor":2},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Hembras Levante","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Novillos Desarrollo","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toros","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Toretes","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Bueyes","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"Las G U A Y A B A S","categoria":"Existencia Final","tipo":"Inventario Final","valor":4},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Paridas","tipo":"Inventario Inicial","valor":126},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Secas","tipo":"Inventario Inicial","valor":54},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novilla Vientre","tipo":"Inventario Inicial","valor":56},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Machos","tipo":"Inventario Inicial","valor":54},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Hembras","tipo":"Inventario Inicial","valor":72},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Hembras Levante","tipo":"Inventario Inicial","valor":140},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novillos Desarrollo","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toros","tipo":"Inventario Inicial","valor":26},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toretes","tipo":"Inventario Inicial","valor":3},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Bueyes","tipo":"Inventario Inicial","valor":4},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Existencia Final","tipo":"Inventario Inicial","valor":535},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Paridas","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Secas","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novilla Vientre","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Machos","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Hembras","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Hembras Levante","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novillos Desarrollo","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toros","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toretes","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Bueyes","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Existencia Final","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Paridas","tipo":"Nacimiento","valor":5},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Secas","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novilla Vientre","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Machos","tipo":"Nacimiento","valor":4},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Hembras","tipo":"Nacimiento","valor":1},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Hembras Levante","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novillos Desarrollo","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toros","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toretes","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Bueyes","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Existencia Final","tipo":"Nacimiento","valor":10},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Paridas","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Secas","tipo":"Entradas","valor":2},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novilla Vientre","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Machos","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Hembras","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Hembras Levante","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novillos Desarrollo","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toros","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toretes","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Bueyes","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Existencia Final","tipo":"Entradas","valor":2},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Paridas","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Secas","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novilla Vientre","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Machos","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Hembras","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Hembras Levante","tipo":"Ventas","valor":4},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novillos Desarrollo","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toros","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toretes","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Bueyes","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Existencia Final","tipo":"Ventas","valor":4},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Paridas","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Secas","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novilla Vientre","tipo":"Muertes","valor":1},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Machos","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Hembras","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Hembras Levante","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novillos Desarrollo","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toros","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toretes","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Bueyes","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Existencia Final","tipo":"Muertes","valor":1},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Paridas","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Secas","tipo":"Salidas","valor":5},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novilla Vientre","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Machos","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Hembras","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Hembras Levante","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novillos Desarrollo","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toros","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toretes","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Bueyes","tipo":"Salidas","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Existencia Final","tipo":"Salidas","valor":5},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Paridas","tipo":"Inventario Final","valor":131},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Vacas Secas","tipo":"Inventario Final","valor":51},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novilla Vientre","tipo":"Inventario Final","valor":55},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Machos","tipo":"Inventario Final","valor":58},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Crías Hembras","tipo":"Inventario Final","valor":73},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Hembras Levante","tipo":"Inventario Final","valor":136},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Novillos Desarrollo","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toros","tipo":"Inventario Final","valor":26},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Toretes","tipo":"Inventario Final","valor":3},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Bueyes","tipo":"Inventario Final","valor":4},{"anio":2026,"finca":"Los C A B O N A L E S","categoria":"Existencia Final","tipo":"Inventario Final","valor":537},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Paridas","tipo":"Inventario Inicial","valor":12},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Secas","tipo":"Inventario Inicial","valor":2},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novilla Vientre","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Machos","tipo":"Inventario Inicial","valor":5},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Hembras","tipo":"Inventario Inicial","valor":6},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Hembras Levante","tipo":"Inventario Inicial","valor":1},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novillos Desarrollo","tipo":"Inventario Inicial","valor":12},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toros","tipo":"Inventario Inicial","valor":1},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toretes","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Bueyes","tipo":"Inventario Inicial","valor":4},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Existencia Final","tipo":"Inventario Inicial","valor":43},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Paridas","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Secas","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novilla Vientre","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Machos","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Hembras","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Hembras Levante","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novillos Desarrollo","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toros","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toretes","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Bueyes","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Existencia Final","tipo":"Compras","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Paridas","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Secas","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novilla Vientre","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Machos","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Hembras","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Hembras Levante","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novillos Desarrollo","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toros","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toretes","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Bueyes","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Existencia Final","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Paridas","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Secas","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novilla Vientre","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Machos","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Hembras","tipo":"Entradas","valor":1},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Hembras Levante","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novillos Desarrollo","tipo":"Entradas","valor":4},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toros","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toretes","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Bueyes","tipo":"Entradas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Existencia Final","tipo":"Entradas","valor":5},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Paridas","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Secas","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novilla Vientre","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Machos","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Hembras","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Hembras Levante","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novillos Desarrollo","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toros","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toretes","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Bueyes","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Existencia Final","tipo":"Ventas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Paridas","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Secas","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novilla Vientre","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Machos","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Hembras","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Hembras Levante","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novillos Desarrollo","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toros","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toretes","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Bueyes","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Existencia Final","tipo":"Muertes","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Paridas","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Secas","tipo":"Saladas","valor":2},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novilla Vientre","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Machos","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Hembras","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Hembras Levante","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novillos Desarrollo","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toros","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toretes","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Bueyes","tipo":"Saladas","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Existencia Final","tipo":"Saladas","valor":2},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Paridas","tipo":"Inventario Final","valor":12},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Vacas Secas","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novilla Vientre","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Machos","tipo":"Inventario Final","valor":5},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Crías Hembras","tipo":"Inventario Final","valor":7},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Hembras Levante","tipo":"Inventario Final","valor":1},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Novillos Desarrollo","tipo":"Inventario Final","valor":16},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toros","tipo":"Inventario Final","valor":1},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Toretes","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Bueyes","tipo":"Inventario Final","valor":4},{"anio":2026,"finca":"Los C H A G U I T E S","categoria":"Existencia Final","tipo":"Inventario Final","valor":46},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Paridas","tipo":"Inventario Inicial","valor":90},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Secas","tipo":"Inventario Inicial","valor":78},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novilla Vientre","tipo":"Inventario Inicial","valor":53},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Machos","tipo":"Inventario Inicial","valor":46},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Hembras","tipo":"Inventario Inicial","valor":44},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Hembras Levante","tipo":"Inventario Inicial","valor":120},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novillos Desarrollo","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toros","tipo":"Inventario Inicial","valor":14},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toretes","tipo":"Inventario Inicial","valor":5},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Bueyes","tipo":"Inventario Inicial","valor":2},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Existencia Final","tipo":"Inventario Inicial","valor":452},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Paridas","tipo":"Compras","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Secas","tipo":"Compras","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novilla Vientre","tipo":"Compras","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Machos","tipo":"Compras","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Hembras","tipo":"Compras","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Hembras Levante","tipo":"Compras","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novillos Desarrollo","tipo":"Compras","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toros","tipo":"Compras","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toretes","tipo":"Compras","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Bueyes","tipo":"Compras","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Existencia Final","tipo":"Compras","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Paridas","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Secas","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novilla Vientre","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Machos","tipo":"Nacimiento","valor":1},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Hembras","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Hembras Levante","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novillos Desarrollo","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toros","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toretes","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Bueyes","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Existencia Final","tipo":"Nacimiento","valor":1},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Paridas","tipo":"Entradas","valor":1},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Secas","tipo":"Entradas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novilla Vientre","tipo":"Entradas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Machos","tipo":"Entradas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Hembras","tipo":"Entradas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Hembras Levante","tipo":"Entradas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novillos Desarrollo","tipo":"Entradas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toros","tipo":"Entradas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toretes","tipo":"Entradas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Bueyes","tipo":"Entradas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Existencia Final","tipo":"Entradas","valor":1},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Paridas","tipo":"Ventas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Secas","tipo":"Ventas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novilla Vientre","tipo":"Ventas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Machos","tipo":"Ventas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Hembras","tipo":"Ventas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Hembras Levante","tipo":"Ventas","valor":28},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novillos Desarrollo","tipo":"Ventas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toros","tipo":"Ventas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toretes","tipo":"Ventas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Bueyes","tipo":"Ventas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Existencia Final","tipo":"Ventas","valor":28},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Paridas","tipo":"Muertes","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Secas","tipo":"Muertes","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novilla Vientre","tipo":"Muertes","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Machos","tipo":"Muertes","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Hembras","tipo":"Muertes","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Hembras Levante","tipo":"Muertes","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novillos Desarrollo","tipo":"Muertes","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toros","tipo":"Muertes","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toretes","tipo":"Muertes","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Bueyes","tipo":"Muertes","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Existencia Final","tipo":"Muertes","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Paridas","tipo":"Saladas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Secas","tipo":"Saladas","valor":1},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novilla Vientre","tipo":"Saladas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Machos","tipo":"Saladas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Hembras","tipo":"Saladas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Hembras Levante","tipo":"Saladas","valor":1},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novillos Desarrollo","tipo":"Saladas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toros","tipo":"Saladas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toretes","tipo":"Saladas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Bueyes","tipo":"Saladas","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Existencia Final","tipo":"Saladas","valor":2},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Paridas","tipo":"Inventario Final","valor":91},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Vacas Secas","tipo":"Inventario Final","valor":77},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novilla Vientre","tipo":"Inventario Final","valor":53},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Machos","tipo":"Inventario Final","valor":47},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Crías Hembras","tipo":"Inventario Final","valor":44},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Hembras Levante","tipo":"Inventario Final","valor":91},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Novillos Desarrollo","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toros","tipo":"Inventario Final","valor":14},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Toretes","tipo":"Inventario Final","valor":5},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Bueyes","tipo":"Inventario Final","valor":2},{"anio":2026,"finca":"De M O N T E F R E S C O","categoria":"Existencia Final","tipo":"Inventario Final","valor":424},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Paridas","tipo":"Inventario Inicial","valor":384},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Secas","tipo":"Inventario Inicial","valor":178},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novilla Vientre","tipo":"Inventario Inicial","valor":143},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Machos","tipo":"Inventario Inicial","valor":164},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Hembras","tipo":"Inventario Inicial","valor":220},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Hembras Levante","tipo":"Inventario Inicial","valor":154},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novillos Desarrollo","tipo":"Inventario Inicial","valor":31},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toros","tipo":"Inventario Inicial","valor":25},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toretes","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Bueyes","tipo":"Inventario Inicial","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Existencia Final","tipo":"Inventario Inicial","valor":1299},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Paridas","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Secas","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novilla Vientre","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Machos","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Hembras","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Hembras Levante","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novillos Desarrollo","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toros","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toretes","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Bueyes","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Existencia Final","tipo":"Compras","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Paridas","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Secas","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novilla Vientre","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Machos","tipo":"Nacimiento","valor":24},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Hembras","tipo":"Nacimiento","valor":15},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Hembras Levante","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novillos Desarrollo","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toros","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toretes","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Bueyes","tipo":"Nacimiento","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Existencia Final","tipo":"Nacimiento","valor":39},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Paridas","tipo":"Entradas","valor":39},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Secas","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novilla Vientre","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Machos","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Hembras","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Hembras Levante","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novillos Desarrollo","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toros","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toretes","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Bueyes","tipo":"Entradas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Existencia Final","tipo":"Entradas","valor":39},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Paridas","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Secas","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novilla Vientre","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Machos","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Hembras","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Hembras Levante","tipo":"Ventas","valor":31},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novillos Desarrollo","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toros","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toretes","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Bueyes","tipo":"Ventas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Existencia Final","tipo":"Ventas","valor":31},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Paridas","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Secas","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novilla Vientre","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Machos","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Hembras","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Hembras Levante","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novillos Desarrollo","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toros","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toretes","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Bueyes","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Existencia Final","tipo":"Muertes","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Paridas","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Secas","tipo":"Saladas","valor":39},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novilla Vientre","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Machos","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Hembras","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Hembras Levante","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novillos Desarrollo","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toros","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toretes","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Bueyes","tipo":"Saladas","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Existencia Final","tipo":"Saladas","valor":39},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Paridas","tipo":"Inventario Final","valor":423},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Vacas Secas","tipo":"Inventario Final","valor":139},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novilla Vientre","tipo":"Inventario Final","valor":143},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Machos","tipo":"Inventario Final","valor":188},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Crías Hembras","tipo":"Inventario Final","valor":235},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Hembras Levante","tipo":"Inventario Final","valor":123},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Novillos Desarrollo","tipo":"Inventario Final","valor":31},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toros","tipo":"Inventario Final","valor":25},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Toretes","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Bueyes","tipo":"Inventario Final","valor":0},{"anio":2026,"finca":"El C O R O J A L J A L A P A","categoria":"Existencia Final","tipo":"Inventario Final","valor":1307}],"proyeccion_partos":[{"finca":"Estelí /Jalapa","anio":2026,"mes":"Enero","hato":1283,"pct":0,"manual":0,"eco":0,"partos":0,"vacas":0,"novillas":0},{"finca":"Estelí /Jalapa","anio":2026,"mes":"Febrero","hato":1201,"pct":0,"manual":0,"eco":0,"partos":0,"vacas":0,"novillas":0},{"finca":"Estelí /Jalapa","anio":2026,"mes":"Marzo","hato":1336,"pct":0,"manual":0,"eco":0,"partos":0,"vacas":0,"novillas":0},{"finca":"Estelí /Jalapa","anio":2026,"mes":"Abril","hato":1285,"pct":0,"manual":0,"eco":0,"partos":0,"vacas":0,"novillas":0},{"finca":"Estelí /Jalapa","anio":2026,"mes":"Mayo","hato":1291,"pct":0,"manual":0,"eco":0,"partos":0,"vacas":0,"novillas":0},{"finca":"Estelí /Jalapa","anio":2026,"mes":"Junio","hato":1266,"pct":0,"manual":0,"eco":0,"partos":0,"vacas":0,"novillas":0},{"finca":"Estelí /Jalapa","anio":2026,"mes":"Julio","hato":1274,"pct":0,"manual":0,"eco":0,"partos":0,"vacas":0,"novillas":0},{"finca":"Estelí /Jalapa","anio":2026,"mes":"Agosto","hato":1285,"pct":0,"manual":0,"eco":0,"partos":0,"vacas":0,"novillas":0},{"finca":"Estelí /Jalapa","anio":2026,"mes":"Septiembre","hato":1297,"pct":0,"manual":0,"eco":0,"partos":0,"vacas":0,"novillas":0},{"finca":"Estelí /Jalapa","anio":2026,"mes":"Octubre","hato":1297,"pct":0,"manual":0,"eco":0,"partos":0,"vacas":0,"novillas":0},{"finca":"Estelí /Jalapa","anio":2026,"mes":"Noviembre","hato":1297,"pct":0,"manual":0,"eco":0,"partos":0,"vacas":0,"novillas":0},{"finca":"Estelí /Jalapa","anio":2026,"mes":"Diciembre","hato":1297,"pct":0,"manual":0,"eco":0,"partos":0,"vacas":0,"novillas":0}],"inventario_general":[{"finca":"ESTELI","anio":2026,"categoria":"-Novillos","existencia_inicial":12,"compras":0,"nacimientos":0,"traslado_entradas":4,"ventas":0,"muertes":0,"traslado_salidas":0,"existencia_final":16},{"finca":"ESTELI","anio":2026,"categoria":"-Cría Machos","existencia_inicial":128,"compras":0,"nacimientos":8,"traslado_entradas":4,"ventas":0,"muertes":0,"traslado_salidas":4,"existencia_final":136},{"finca":"ESTELI","anio":2026,"categoria":"-Reproductores","existencia_inicial":47,"compras":0,"nacimientos":0,"traslado_entradas":0,"ventas":0,"muertes":0,"traslado_salidas":0,"existencia_final":47},{"finca":"ESTELI","anio":2026,"categoria":"-Toretes Reproduct","existencia_inicial":9,"compras":0,"nacimientos":0,"traslado_entradas":0,"ventas":0,"muertes":0,"traslado_salidas":0,"existencia_final":9},{"finca":"ESTELI","anio":2026,"categoria":"-Bueyes","existencia_inicial":14,"compras":0,"nacimientos":0,"traslado_entradas":0,"ventas":0,"muertes":0,"traslado_salidas":0,"existencia_final":14},{"finca":"ESTELI","anio":2026,"categoria":"-Vacas Paridas","existencia_inicial":297,"compras":0,"nacimientos":0,"traslado_entradas":24,"ventas":0,"muertes":0,"traslado_salidas":14,"existencia_final":307},{"finca":"ESTELI","anio":2026,"categoria":"-Vacas Secas","existencia_inicial":146,"compras":0,"nacimientos":0,"traslado_entradas":2,"ventas":0,"muertes":0,"traslado_salidas":12,"existencia_final":136},{"finca":"ESTELI","anio":2026,"categoria":"-Nov. Vientre","existencia_inicial":138,"compras":0,"nacimientos":0,"traslado_entradas":0,"ventas":0,"muertes":1,"traslado_salidas":0,"existencia_final":137},{"finca":"ESTELI","anio":2026,"categoria":"-Crías Hembras","existencia_inicial":168,"compras":0,"nacimientos":2,"traslado_entradas":11,"ventas":0,"muertes":0,"traslado_salidas":10,"existencia_final":171},{"finca":"ESTELI","anio":2026,"categoria":"-Hembras Levante","existencia_inicial":304,"compras":0,"nacimientos":0,"traslado_entradas":0,"ventas":32,"muertes":1,"traslado_salidas":0,"existencia_final":271},{"finca":"ESTELI","anio":2026,"categoria":"TOTAL","existencia_inicial":1263,"compras":0,"nacimientos":10,"traslado_entradas":45,"ventas":32,"muertes":2,"traslado_salidas":40,"existencia_final":1244},{"finca":"JALAPA","anio":2026,"categoria":"-Novillos","existencia_inicial":31,"compras":0,"nacimientos":0,"traslado_entradas":0,"ventas":0,"muertes":0,"traslado_salidas":0,"existencia_final":31},{"finca":"JALAPA","anio":2026,"categoria":"-Cría Machos","existencia_inicial":164,"compras":0,"nacimientos":24,"traslado_entradas":0,"ventas":0,"muertes":0,"traslado_salidas":0,"existencia_final":188},{"finca":"JALAPA","anio":2026,"categoria":"-Reproductores","existencia_inicial":25,"compras":0,"nacimientos":0,"traslado_entradas":0,"ventas":0,"muertes":0,"traslado_salidas":0,"existencia_final":25},{"finca":"JALAPA","anio":2026,"categoria":"-Vacas Paridas","existencia_inicial":384,"compras":0,"nacimientos":0,"traslado_entradas":39,"ventas":0,"muertes":0,"traslado_salidas":0,"existencia_final":423},{"finca":"JALAPA","anio":2026,"categoria":"-Vacas Secas","existencia_inicial":178,"compras":0,"nacimientos":0,"traslado_entradas":0,"ventas":0,"muertes":0,"traslado_salidas":39,"existencia_final":139},{"finca":"JALAPA","anio":2026,"categoria":"-Nov. Vientre","existencia_inicial":143,"compras":0,"nacimientos":0,"traslado_entradas":0,"ventas":0,"muertes":0,"traslado_salidas":0,"existencia_final":143},{"finca":"JALAPA","anio":2026,"categoria":"-Crías Hembras","existencia_inicial":220,"compras":0,"nacimientos":15,"traslado_entradas":0,"ventas":0,"muertes":0,"traslado_salidas":0,"existencia_final":235},{"finca":"JALAPA","anio":2026,"categoria":"-Hembras Levante","existencia_inicial":154,"compras":0,"nacimientos":0,"traslado_entradas":0,"ventas":31,"muertes":0,"traslado_salidas":0,"existencia_final":123},{"finca":"JALAPA","anio":2026,"categoria":"TOTAL","existencia_inicial":1299,"compras":0,"nacimientos":39,"traslado_entradas":39,"ventas":31,"muertes":0,"traslado_salidas":39,"existencia_final":1307}],"muertes":[{"finca":"F  I  N  C  A","anio":2025,"masa_ganadera":0,"crias_machos":0,"crias_hembras":0,"adultos":0,"muertes":0,"porcentaje":0},{"finca":"F  I  N  C  A","anio":2026,"masa_ganadera":0,"crias_machos":0,"crias_hembras":0,"adultos":0,"muertes":0,"porcentaje":0},{"finca":"El Castillo","anio":2025,"masa_ganadera":210,"crias_machos":0,"crias_hembras":0,"adultos":0,"muertes":0,"porcentaje":0},{"finca":"El Castillo","anio":2026,"masa_ganadera":9,"crias_machos":0,"crias_hembras":0,"adultos":0,"muertes":0,"porcentaje":0},{"finca":"Las Cuchillas","anio":2025,"masa_ganadera":132,"crias_machos":0,"crias_hembras":0,"adultos":2,"muertes":2,"porcentaje":2},{"finca":"Las Cuchillas","anio":2026,"masa_ganadera":224,"crias_machos":0,"crias_hembras":0,"adultos":0,"muertes":0,"porcentaje":0},{"finca":"Las Guayabas","anio":2025,"masa_ganadera":177,"crias_machos":0,"crias_hembras":0,"adultos":0,"muertes":0,"porcentaje":0},{"finca":"Las Guayabas","anio":2026,"masa_ganadera":4,"crias_machos":0,"crias_hembras":0,"adultos":0,"muertes":0,"porcentaje":0},{"finca":"Los Carbonales","anio":2025,"masa_ganadera":334,"crias_machos":0,"crias_hembras":1,"adultos":0,"muertes":1,"porcentaje":0},{"finca":"Los Carbonales","anio":2026,"masa_ganadera":537,"crias_machos":0,"crias_hembras":0,"adultos":1,"muertes":1,"porcentaje":0},{"finca":"Los Chaguites","anio":2025,"masa_ganadera":80,"crias_machos":0,"crias_hembras":0,"adultos":0,"muertes":0,"porcentaje":0},{"finca":"Los Chaguites","anio":2026,"masa_ganadera":46,"crias_machos":0,"crias_hembras":0,"adultos":0,"muertes":0,"porcentaje":0},{"finca":"Monte Fresco","anio":2025,"masa_ganadera":359,"crias_machos":0,"crias_hembras":0,"adultos":0,"muertes":0,"porcentaje":0},{"finca":"Monte Fresco","anio":2026,"masa_ganadera":424,"crias_machos":0,"crias_hembras":0,"adultos":1,"muertes":1,"porcentaje":0},{"finca":"PRIMERO MAYO","anio":2025,"masa_ganadera":1305,"crias_machos":1,"crias_hembras":1,"adultos":1,"muertes":3,"porcentaje":0},{"finca":"PRIMERO MAYO","anio":2026,"masa_ganadera":1307,"crias_machos":0,"crias_hembras":0,"adultos":0,"muertes":0,"porcentaje":0}],"nacimientos":[{"finca":"El Castillo","anio":2025,"hato_ganadero":142,"machos":0,"hembras":0,"nacimientos":0,"porcentaje":0},{"finca":"El Castillo","anio":2026,"hato_ganadero":3,"machos":0,"hembras":0,"nacimientos":0,"porcentaje":0},{"finca":"Las Cuchillas","anio":2025,"hato_ganadero":58,"machos":0,"hembras":1,"nacimientos":1,"porcentaje":2},{"finca":"Las Cuchillas","anio":2026,"hato_ganadero":104,"machos":3,"hembras":1,"nacimientos":4,"porcentaje":4},{"finca":"Las Guayabas","anio":2025,"hato_ganadero":4,"machos":0,"hembras":0,"nacimientos":0,"porcentaje":0},{"finca":"Las Guayabas","anio":2026,"hato_ganadero":2,"machos":0,"hembras":0,"nacimientos":0,"porcentaje":0},{"finca":"Los Carbonales","anio":2025,"hato_ganadero":181,"machos":2,"hembras":3,"nacimientos":5,"porcentaje":3},{"finca":"Los Carbonales","anio":2026,"hato_ganadero":236,"machos":4,"hembras":1,"nacimientos":5,"porcentaje":2},{"finca":"Los Chaguites","anio":2025,"hato_ganadero":9,"machos":0,"hembras":0,"nacimientos":0,"porcentaje":0},{"finca":"Los Chaguites","anio":2026,"hato_ganadero":14,"machos":0,"hembras":0,"nacimientos":0,"porcentaje":0},{"finca":"Monte Fresco","anio":2025,"hato_ganadero":187,"machos":8,"hembras":8,"nacimientos":16,"porcentaje":9},{"finca":"Monte Fresco","anio":2026,"hato_ganadero":221,"machos":1,"hembras":0,"nacimientos":1,"porcentaje":0},{"finca":"PRIMERO MAYO","anio":2025,"hato_ganadero":667,"machos":24,"hembras":22,"nacimientos":46,"porcentaje":7},{"finca":"PRIMERO MAYO","anio":2026,"hato_ganadero":705,"machos":24,"hembras":15,"nacimientos":39,"porcentaje":6}]}; window.CURRENT_MODULE = 'destete';</script>
+  <script id="dataContainer">
+  // Datos en memoria (se cargan al subir CSVs)
+  window.APP_DATA = {};
+  window.CURRENT_MODULE = 'inventario_general';
+</script>
 
   <script>
     // =========================
@@ -665,9 +675,10 @@ function animateChartsIn() {
       if (!categoriaFilterWrap) return;
       if (mod === 'ventas') {
         categoriaFilterWrap.classList.remove('hidden');
+        if (categoriaFilter) categoriaFilter.value = 'HEMBRAS';
       } else {
         categoriaFilterWrap.classList.add('hidden');
-        if (categoriaFilter) categoriaFilter.value = 'all';
+        if (categoriaFilter) categoriaFilter.value = 'HEMBRAS';
       }
     }
 
@@ -762,10 +773,94 @@ function detectModuleFromContent(fileName, rows) {
       }
     }
 
+    
+    function isExcelFile(name){
+      return /\.(xlsx|xls)$/i.test(name || "");
+    }
+
+    function normalizeSheetRows(rows){
+      // Ensure rows is array of arrays of strings
+      return (rows || []).map(r => (r || []).map(v => (v === null || v === undefined) ? "" : String(v)));
+    }
+
+    function handleExcelFile(file){
+      return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+          try{
+            if (typeof XLSX === 'undefined') {
+              console.error('XLSX no está disponible. Revisa conexión a internet o bloqueo de CDN.');
+              alert('No se pudo cargar el lector de Excel (XLSX). Asegúrate de tener internet o usa los CSV.');
+              resolve();
+              return;
+            }
+            const modsLoaded = new Set();
+
+            const data = new Uint8Array(ev.target.result);
+            const wb = XLSX.read(data, { type: "array" });
+            const sheetNames = wb.SheetNames || [];
+            sheetNames.forEach((sn) => {
+              const ws = wb.Sheets[sn];
+              if(!ws) return;
+              const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "", raw: false });
+              const rows = normalizeSheetRows(aoa);
+              if(!rows || rows.length === 0) return;
+
+              const mod = detectModuleFromContent(sn, rows);
+              console.log("Hoja:", sn, "| módulo detectado:", mod);
+
+              if(!mod){
+                console.warn("No se pudo detectar el tipo de hoja:", sn);
+                return;
+              }
+              modsLoaded.add(mod);
+
+              try{
+                if (mod === 'inventario_general') processInventarioGeneral(rows);
+                else if (mod === 'hato_reproductivo') processHatoReproductivo(rows);
+                else if (mod === 'flujo_ganado_categoria') processFlujoGanadoCategoria(rows);
+                else if (mod === 'inventario_movimiento') processInventarioMovimiento(rows);
+                else if (mod === 'nacimientos') processNacimientos(rows);
+                else if (mod === 'nacimientos_mes') processNacimientosMes(rows);
+                else if (mod === 'nacimientos_finca') processNacimientoFinca(rows);
+                else if (mod === 'muertes') processMuertes(rows);
+                else if (mod === 'muertes_mes') processMuertesMes(rows);
+                else if (mod === 'muertes_fincas') processMuertesFincas(rows);
+                else if (mod === 'lluvias') processLluvias(rows);
+                else if (mod === 'pesajes') processPesajes(rows);
+                else if (mod === 'hembras') processHembras(rows);
+                else if (mod === 'proyeccion_partos') processProyeccionPartos(rows);
+                else if (mod === 'destete') processDestete(rows);
+                else if (mod === 'ventas') processVentas(rows);
+                else if (mod === 'ventas_ganado') processVentasGanado(rows);
+              }catch(e){
+                console.error("Error procesando hoja", sn, "=>", e);
+              }
+            });
+            // Finalizar carga: actualizar UI y filtros
+            if (modsLoaded.size === 0) {
+              console.warn('Excel cargado pero no se detectaron hojas compatibles.');
+              alert('Se cargó el Excel, pero no pude identificar hojas compatibles. Verifica los nombres de hojas o el formato.');
+            } else {
+              modsLoaded.forEach(m => afterDataLoaded(m));
+            }
+          }catch(err){
+            console.error("Error leyendo Excel:", err);
+          }
+          resolve();
+        };
+        reader.readAsArrayBuffer(file);
+      });
+    }
+
     function handleMultipleFiles(files) {
       if (!files || files.length === 0) return;
 
       Array.from(files).forEach(file => {
+        if (isExcelFile(file.name)) {
+          handleExcelFile(file);
+          return;
+        }
         Papa.parse(file, {
           delimiter: ";",
           skipEmptyLines: "greedy",
@@ -1835,8 +1930,9 @@ function processMuertes(rows) {
 
     
 function processDestete(rows) {
-  // CSV: "DESTETE DE TERNEROS"
-  // Mantiene los meses aunque existan ceros (para evitar que el módulo aparezca vacío).
+  // CSV: "DESTETE TERNEROS"
+  // Este módulo usa una tabla de 3 bloques: MACHOS / HEMBRAS / TODOS.
+  // La UI espera esta forma: { mes, machos:{...}, hembras:{...}, todos:{...} }
   const out = [];
   let started = false;
 
@@ -1850,7 +1946,9 @@ function processDestete(rows) {
     const c0Key = normalizeKey(c0);
 
     if (!started) {
-      if (c0Key === 'MES') {
+      // Algunos reportes vienen como "M E S" (letras separadas)
+      const c0NoSpaces = c0Key.replace(/\s+/g, '');
+      if (c0Key === 'MES' || c0NoSpaces === 'MES') {
         started = true;
       }
       continue;
@@ -1858,7 +1956,7 @@ function processDestete(rows) {
 
     if (!c0) continue;
 
-    // cortar al llegar a totales/promedios
+    // Cortar al llegar a totales/promedios
     if (c0Key.includes('TOTAL KGS') || c0Key.includes('PROMEDIO') || c0Key === 'TOTAL') {
       break;
     }
@@ -1869,57 +1967,94 @@ function processDestete(rows) {
 
     const mes = c0.trim();
 
-    const machosTotal = toNumber(r[1]);
-    const machosPesoNacim = toNumber(r[2]);
-    const machosPesoDestete = toNumber(r[3]);
-    const machosIncrem = toNumber(r[4]);
+    // Estructura esperada por el dashboard:
+    // Cols (por el CSV típico):
+    // 0: MES
+    // 1-5: MACHOS  (TOTAL, PESO NACIM, PESO DESTETE, INCREM, EDAD)
+    // 6-10: HEMBRAS (TOTAL, PESO NACIM, PESO DESTETE, INCREM, EDAD)
+    // 11-15: TODOS  (TOTAL, PESO NACIM, PESO DESTETE, INCREM, EDAD)
+    const machos = {
+      total: toNumber(r[1]),
+      pesoNacim: toNumber(r[2]),
+      pesoDestete: toNumber(r[3]),
+      increm: toNumber(r[4]),
+      edad: toNumber(r[5]),
+    };
 
-    const hembrasTotal = toNumber(r[6]);
-    const hembrasPesoNacim = toNumber(r[7]);
-    const hembrasPesoDestete = toNumber(r[8]);
-    const hembrasIncrem = toNumber(r[9]);
+    const hembras = {
+      total: toNumber(r[6]),
+      pesoNacim: toNumber(r[7]),
+      pesoDestete: toNumber(r[8]),
+      increm: toNumber(r[9]),
+      edad: toNumber(r[10]),
+    };
 
-    const todosTotal = toNumber(r[11]);
-    const todosPesoNacim = toNumber(r[12]);
-    const todosPesoDestete = toNumber(r[13]);
-    const todosIncrem = toNumber(r[14]);
+    // Nota: el bloque "TODOS" en algunos reportes viene desalineado.
+// Para evitar valores erróneos, calculamos TODOS como (MACHOS + HEMBRAS).
+const todosTotal = (machos.total || 0) + (hembras.total || 0);
+const todos = {
+  total: todosTotal,
+  pesoNacim: (machos.pesoNacim || 0) + (hembras.pesoNacim || 0),
+  pesoDestete: (machos.pesoDestete || 0) + (hembras.pesoDestete || 0),
+  increm: (machos.increm || 0) + (hembras.increm || 0),
+  // Edad viene como promedio por mes; la agregación global se hace ponderada en metaUI
+  edad: (todosTotal > 0)
+    ? (((machos.edad || 0) * (machos.total || 0)) + ((hembras.edad || 0) * (hembras.total || 0))) / todosTotal
+    : 0,
+};
 
-    out.push({
-      mes,
-      machosTotal, machosPesoNacim, machosPesoDestete, machosIncrem,
-      hembrasTotal, hembrasPesoNacim, hembrasPesoDestete, hembrasIncrem,
-      todosTotal, todosPesoNacim, todosPesoDestete, todosIncrem,
-      edadProm: toNumber(r[15]),
+    out.push({ mes, machos, hembras, todos });
+  }
+
+  // Metadatos por sexo (para KPI/Promedios)
+  const meta = {
+    machos: { total: 0, pesoNacim: 0, pesoDestete: 0, increm: 0, edadSum: 0 },
+    hembras: { total: 0, pesoNacim: 0, pesoDestete: 0, increm: 0, edadSum: 0 },
+    todos: { total: 0, pesoNacim: 0, pesoDestete: 0, increm: 0, edadSum: 0 },
+  };
+
+  for (const d of out) {
+    ['machos', 'hembras', 'todos'].forEach((k) => {
+      meta[k].total += (d[k].total || 0);
+      meta[k].pesoNacim += (d[k].pesoNacim || 0);
+      meta[k].pesoDestete += (d[k].pesoDestete || 0);
+      meta[k].increm += (d[k].increm || 0);
+      meta[k].edadSum += (d[k].edad || 0) * (d[k].total || 0);
     });
   }
 
-  // Metadatos resumidos (para la UI)
-  const meta = out.reduce((acc, d) => {
-    acc.totalTerneros += (d.todosTotal || 0);
-    acc.pesoDesteteSum += (d.todosPesoDestete || 0) * (d.todosTotal || 0);
-    acc.pesoNacimSum += (d.todosPesoNacim || 0) * (d.todosTotal || 0);
-    return acc;
-  }, { totalTerneros: 0, pesoDesteteSum: 0, pesoNacimSum: 0 });
+  const metaUI = {};
+  ['machos', 'hembras', 'todos'].forEach((k) => {
+    const t = meta[k].total || 0;
+    metaUI[k] = {
+      totalTerneros: t,
+      pesoNacimProm: t > 0 ? (meta[k].pesoNacim / t) : 0,
+      pesoDesteteProm: t > 0 ? (meta[k].pesoDestete / t) : 0,
+      // Edad (días) ponderada por cantidad
+      edadProm: t > 0 ? (meta[k].edadSum / t) : 0,
+      // usado como fallback en la UI para "INCREM. KS" promedio
+      increm: t > 0 ? (meta[k].increm / t) : 0,
+    };
+  });
 
   window.APP_DATA.destete = out;
-  window.APP_DATA.destete_meta = {
-    totalTerneros: meta.totalTerneros,
-    pesoDesteteProm: meta.totalTerneros > 0 ? (meta.pesoDesteteSum / meta.totalTerneros) : 0,
-    pesoNacimProm: meta.totalTerneros > 0 ? (meta.pesoNacimSum / meta.totalTerneros) : 0,
-  };
+  window.APP_DATA.destete_meta = metaUI;
 }
+
     function processProyeccionPartos(rows) {
       const monthOrder = MONTHS_FULL;
       const isMonth = (m) => monthOrder.includes(normalizeMonthToFull((m || '').toString().trim()));
 
+      // 1) Año (lo toma del encabezado si existe)
       let year = null;
-      for (let i = 0; i < Math.min(rows.length, 8); i++) {
+      for (let i = 0; i < Math.min(rows.length, 12); i++) {
         const str = (rows[i] || []).join(' ').replace(/\ufeff/g, '');
-        const m = str.match(/(19\d{2}|20\d{2})/);
-        if (m) { year = parseInt(m[1]); break; }
+        const mm = str.match(/(19\d{2}|20\d{2})/);
+        if (mm) { year = parseInt(mm[1]); break; }
       }
       if (!year) year = new Date().getFullYear();
 
+      // 2) Finca (si el CSV lo trae)
       let finca = 'General';
       rows.forEach(r => {
         const c0 = (r?.[0] ?? '').toString().replace(/\ufeff/g, '').trim();
@@ -1928,25 +2063,105 @@ function processDestete(rows) {
         }
       });
 
+      // 3) Detectar fila de encabezados para mapear columnas por nombre (robusto aunque cambie el orden)
+      const normHdr = (s) => stripAccents((s ?? '').toString())
+        .toUpperCase()
+        .replace(/\ufeff/g,'')
+        .replace(/\s+/g,' ')
+        .trim();
+
+      let headerIdx = -1;
+      for (let i = 0; i < Math.min(rows.length, 40); i++) {
+        const r = rows[i] || [];
+        const c0 = normHdr(r[0]);
+        // encabezado típico: MES, y alguna columna que diga TOTAL PARTOS
+        const hasMes = (c0 === 'MES' || c0 === 'M E S');
+        const hasTotalPartos = r.some(x => {
+          const h = normHdr(x);
+          return (h.includes('TOTAL') && h.includes('PARTOS')) || h === 'TOTAL PARTOS';
+        });
+        if (hasMes && hasTotalPartos) { headerIdx = i; break; }
+      }
+
+      let idx = {
+        mes: 0,
+        hato: 1,
+        pct: 2,
+        programacion: 3,
+        partos: 4,
+        vacas: 5,
+        novillas: 6,
+        mn: 7,
+        ia: 8,
+        ia_vacas: 9,
+        ia_novillas: 10,
+      };
+
+      if (headerIdx >= 0) {
+        const hdr = rows[headerIdx] || [];
+        const findIdx = (pred) => {
+          for (let j = 0; j < hdr.length; j++) if (pred(normHdr(hdr[j]))) return j;
+          return -1;
+        };
+
+        const iPartos = findIdx(h => (h.includes('TOTAL') && h.includes('PARTOS')) || h === 'TOTAL PARTOS');
+        if (iPartos >= 0) idx.partos = iPartos;
+
+        const iVacas = findIdx(h => (h.includes('VACAS') && (h.includes('TOTAL') || h.includes('COMPOSICION') || h === 'VACAS')) || h === 'TOTAL VACAS');
+        if (iVacas >= 0) idx.vacas = iVacas;
+
+        const iNov = findIdx(h => h.includes('NOVILLAS') && (h.includes('TOTAL') || h === 'NOVILLAS' || h.includes('COMPOSICION')));
+        if (iNov >= 0) idx.novillas = iNov;
+
+        const iMN = findIdx(h => h === 'M.N' || h === 'MN' || h.includes('M.N'));
+        if (iMN >= 0) idx.mn = iMN;
+
+        const iHato = findIdx(h => (h.includes('HATO') && h.includes('TOTAL')) || h === 'TOTAL HATO' || h === 'HATO');
+        if (iHato >= 0) idx.hato = iHato;
+
+        const iPct = findIdx(h => h.includes('%') && h.includes('PARIC'));
+        if (iPct >= 0) idx.pct = iPct;
+
+        const iProg = findIdx(h => h.includes('PROGRAM') && h.includes('PART'));
+        if (iProg >= 0) idx.programacion = iProg;
+
+        const iIA = findIdx(h => h === 'I.A' || h === 'IA' || (h.includes('I.A') && h.includes('TOTAL')) || (h.includes('IA') && h.includes('TOTAL')));
+        if (iIA >= 0) idx.ia = iIA;
+
+        const iIAV = findIdx(h => (h.includes('I.A') || h.includes('IA')) && h.includes('VACAS'));
+        if (iIAV >= 0) idx.ia_vacas = iIAV;
+
+        const iIAN = findIdx(h => (h.includes('I.A') || h.includes('IA')) && h.includes('NOVILLAS'));
+        if (iIAN >= 0) idx.ia_novillas = iIAN;
+      }
+
+      // 4) Parsear filas de meses (si hay headerIdx, empezar después del header)
       const out = [];
-      rows.forEach(r => {
-        if (!r || r.length < 2) return;
-        const mes = normalizeMonthToFull((r[0] || '').toString().replace(/\ufeff/g, '').trim());
-        if (!isMonth(mes)) return;
+      const startRow = headerIdx >= 0 ? headerIdx + 1 : 0;
+
+      for (let i = startRow; i < rows.length; i++) {
+        const r = rows[i];
+        if (!r || r.length < 2) continue;
+
+        const mes = normalizeMonthToFull((r[idx.mes] || '').toString().replace(/\ufeff/g, '').trim());
+        if (!isMonth(mes)) continue;
 
         out.push({
           finca,
           anio: year,
           mes,
-          hato: toNumber(r[1]),
-          pct: toNumber(((r[2] ?? '') + '').replace('%','')),
-          manual: toNumber(r[3]),
-          eco: toNumber(r[4]),
-          partos: toNumber(r[5]),
-          vacas: toNumber(r[6]),
-          novillas: toNumber(r[7])
+          hato: toNumber(r[idx.hato]),
+          pct: toNumber(((r[idx.pct] ?? '') + '').replace('%','')),
+          programacion: toNumber(r[idx.programacion]),
+          partos: toNumber(r[idx.partos]),         // <- SIEMPRE "Total Partos" (por nombre)
+          vacas: toNumber(r[idx.vacas]),
+          novillas: toNumber(r[idx.novillas]),
+          mn: toNumber(r[idx.mn]),
+          ia: toNumber(r[idx.ia]),
+          ia_vacas: toNumber(r[idx.ia_vacas]),
+          ia_novillas: toNumber(r[idx.ia_novillas]),
         });
-      });
+      }
 
       out.sort((a, b) => monthOrder.indexOf(a.mes) - monthOrder.indexOf(b.mes));
       window.APP_DATA.proyeccion_partos = out;
@@ -2599,7 +2814,7 @@ function renderInventarioGeneralUI(data, allData) {
       charts.hr2 = new Chart(document.getElementById('hr2'), {
         type: 'doughnut',
         data: { labels: compCats, datasets: [{ data: compVals }] },
-        options: { responsive:true, maintainAspectRatio:false, cutout:'65%', plugins:{ legend:{ position:'bottom' } } }
+        options: { responsive:true, maintainAspectRatio:false, cutout:'65%', plugins:{ legend:{ position:'bottom' } }, onClick:(evt, els)=>{ if(!els||!els.length) return; const i=els[0].index; const g=(Object.keys(byGroup)[i]||'').toString().toUpperCase(); setActiveGroup(g); } }
       });
 
       // Chart hr3
@@ -2664,6 +2879,7 @@ function renderInventarioGeneralUI(data, allData) {
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
             <h4 class="font-bold text-slate-700 mb-4">Existencia Final por Categoría</h4>
+            <div id="fg1GroupBtns" class="flex flex-wrap gap-2 mb-4"></div>
             <div class="h-[380px]"><canvas id="fg1"></canvas></div>
           </div>
           <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
@@ -2678,18 +2894,89 @@ function renderInventarioGeneralUI(data, allData) {
         </div>
       `;
 
-      // fg1: bar final by category (top 12)
-      const cats = detail
-        .filter(d => !d.categoria.toUpperCase().includes('SUB') && !d.categoria.toUpperCase().includes('TOTAL'))
-        .map(d => ({ categoria: d.categoria, final: d.final }))
-        .sort((a,b)=>b.final-a.final)
-        .slice(0, 12);
+      // fg1: bar final by categoría (filtrable por grupo)
+      const ALL_GROUPS = ['HATO REPRODUCTIVO','GANADO BOVINO MENOR','GANADO MACHOS'];
+      let activeGroup = null; // null => todos
 
-      charts.fg1 = new Chart(document.getElementById('fg1'), {
-        type: 'bar',
-        data: { labels: cats.map(x=>x.categoria), datasets: [{ label:'Existencia Final', data: cats.map(x=>x.final), borderRadius: 8 }] },
-        options: { responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{ legend:{ display:false } } }
-      });
+      function isCatRow(d) {
+        const c = (d.categoria || '').toString().toUpperCase();
+        return c && !c.includes('SUB') && !c.includes('TOTAL');
+      }
+
+      function getCatsForGroup(groupName) {
+        const rows = detail.filter(isCatRow).filter(d => {
+          if (!groupName) return true;
+          return (d.grupo || '').toString().toUpperCase() === groupName;
+        });
+        return rows
+          .map(d => ({ categoria: d.categoria, final: d.final }))
+          .sort((a,b)=>b.final-a.final)
+          .slice(0, 12);
+      }
+
+      function renderFg1(groupName) {
+        const cats = getCatsForGroup(groupName);
+        const labels = cats.map(x=>x.categoria);
+        const data = cats.map(x=>x.final);
+
+        if (!charts.fg1) {
+          charts.fg1 = new Chart(document.getElementById('fg1'), {
+            type: 'bar',
+            data: { labels, datasets: [{ label:'Existencia Final', data, borderRadius: 8 }] },
+            options: { responsive:true, maintainAspectRatio:false, indexAxis:'y', plugins:{ legend:{ display:false } } }
+          });
+        } else {
+          charts.fg1.data.labels = labels;
+          charts.fg1.data.datasets[0].data = data;
+          charts.fg1.update();
+        }
+      }
+
+      function setActiveGroup(groupName) {
+        activeGroup = groupName || null;
+        // UI buttons
+        const wrap = document.getElementById('fg1GroupBtns');
+        if (wrap) {
+          [...wrap.querySelectorAll('button[data-group]')].forEach(b=>{
+            const g = b.getAttribute('data-group') || '';
+            const isOn = (activeGroup === null && g === 'ALL') || (activeGroup !== null && g === activeGroup);
+            b.classList.toggle('bg-blue-600', isOn);
+            b.classList.toggle('text-white', isOn);
+            b.classList.toggle('bg-white', !isOn);
+            b.classList.toggle('text-slate-700', !isOn);
+            b.classList.toggle('border-slate-200', !isOn);
+          });
+        }
+        renderFg1(activeGroup);
+      }
+
+      // build group buttons (incluye "Todos")
+      const btnWrap = document.getElementById('fg1GroupBtns');
+      if (btnWrap) {
+        const groupsPresent = uniq(detail.map(d => (d.grupo||'').toString().toUpperCase()))
+          .filter(Boolean);
+        const groups = ALL_GROUPS.filter(g => groupsPresent.includes(g));
+        const btns = [
+          { key: 'ALL', label: 'Todos' },
+          ...groups.map(g => ({ key: g, label: g }))
+        ];
+        btnWrap.innerHTML = btns.map(b => `
+          <button data-group="${b.key}"
+            class="px-3 py-1.5 rounded-full text-xs font-semibold border transition
+                   bg-white text-slate-700 border-slate-200 hover:border-slate-300">
+            ${b.label}
+          </button>
+        `).join('');
+        btnWrap.addEventListener('click', (e) => {
+          const t = e.target.closest('button[data-group]');
+          if (!t) return;
+          const g = t.getAttribute('data-group');
+          setActiveGroup(g === 'ALL' ? null : g);
+        });
+      }
+
+      // render inicial: todos
+      renderFg1(null);
 
       // fg2: doughnut by group (sum final)
       const byGroup = {};
@@ -2913,8 +3200,9 @@ function renderNacimientosUI(data, allData) {
   const pctDelta = (latestYear && prevYear && prevTotal !== 0) ? (delta / prevTotal) : 0;
 
   const kpis = (latestYear && prevYear) ? ([
-    { label: `Total Nacimientos ${latestYear}`, value: latestTotal, icon: '🍼' },
     { label: `Total Nacimientos ${prevYear}`, value: prevTotal, icon: '📦' },
+    { label: `Total Nacimientos ${latestYear}`, value: latestTotal, icon: '🍼' },
+    
     { label: 'Variación', value: delta, icon: delta >= 0 ? '📈' : '📉' },
     { label: '% Variación', value: pctDelta, icon: '🧮', isPct: true },
   ]) : ([
@@ -3381,8 +3669,9 @@ function renderMuertesUI(data, allData) {
   const latestRate = pctDelta;
 
 const kpis = (latestYear && prevYear) ? ([
-    { label: `Total Muertes ${latestYear}`, value: latestTotal, icon: '⚠️' },
     { label: `Total Muertes ${prevYear}`, value: prevTotal, icon: '📦' },
+    { label: `Total Muertes ${latestYear}`, value: latestTotal, icon: '⚠️' },
+    
     { label: 'Variación', value: delta, icon: delta <= 0 ? '📉' : '📈' },
     { label: `Tasa ${latestYear}`, value: latestRate, icon: '🧮', isPct: true },
   ]) : ([
@@ -4104,22 +4393,18 @@ charts.he1 = new Chart(document.getElementById('he1'), {
       const kgNacimTotal = data.reduce((a, b) => a + (pick(b).pesoNacim || 0), 0);
       const kgDesteteTotal = data.reduce((a, b) => a + (pick(b).pesoDestete || 0), 0);
       const kgIncremTotal = data.reduce((a, b) => a + (pick(b).increm || 0), 0);
+      const edadSum = data.reduce((a, b) => a + ((pick(b).edad || 0) * (pick(b).total || 0)), 0);
+      const avgEdad = total > 0 ? (edadSum / total) : 0;
 
       // Promedios por ternero (método solicitado: total kilos / total terneros)
       const avgPesoNacim = total > 0 ? (kgNacimTotal / total) : 0;
       const avgPesoDestete = total > 0 ? (kgDesteteTotal / total) : 0;
 
-      // INCREM. KS promedio (total increm kilos / total terneros), con fallback a resumen del reporte cuando aplica
-      const hasMonthFilter = (monthFilterWrap && monthFilter && !monthFilterWrap.classList.contains('hidden') && monthFilter.value !== 'all');
-      let incAvg = 0;
-      if (!hasMonthFilter && window.APP_DATA.destete_meta && window.APP_DATA.destete_meta[sex] && typeof window.APP_DATA.destete_meta[sex].increm === 'number') {
-        incAvg = window.APP_DATA.destete_meta[sex].increm || (total > 0 ? (kgIncremTotal / total) : 0);
-      } else {
-        incAvg = total > 0 ? (kgIncremTotal / total) : 0;
-      }
+      // INCREMENTO promedio = (Peso al Destete - Peso al Nacimiento)
+      const incAvg = (avgPesoDestete - avgPesoNacim);
 
       const tTotal = (sex === 'todos') ? 'Total Destetados (Todos)' : `Total Destetados (${sexLabel})`;
-      const tKilos = (sex === 'todos') ? 'Kilos Destete (Todos)' : `Kilos Destete (${sexLabel})`;
+      const tKilos = (sex === 'todos') ? 'Edad (Días)' : `Kilos Destete (${sexLabel})`;
 
       // Destete es el único módulo con 5 tarjetas
       kpiContainer.className = 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6';
@@ -4131,7 +4416,7 @@ charts.he1 = new Chart(document.getElementById('he1'), {
         </div>
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
           <p class="text-sm font-medium text-slate-500">${tKilos}</p>
-          <h3 class="text-2xl font-bold text-slate-800 mt-1">${fmtNum(kgDesteteTotal, 0)} Kg</h3>
+          <h3 class="text-2xl font-bold text-slate-800 mt-1">${sex === 'todos' ? (fmtNum(avgEdad, 0) + ' días') : (fmtNum(kgDesteteTotal, 0) + ' Kg')}</h3>
         </div>
         <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
           <p class="text-sm font-medium text-slate-500">Promedio Peso al Nacimiento</p>
@@ -4583,7 +4868,7 @@ function renderVentasUI(data) {
   const pico = sorted.reduce((best, cur) => (cur.importe||0) > (best.importe||0) ? cur : best, sorted[0] || { mes:'N/A', anio:'', importe:0 });
 
   // Ajuste: si la categoría es CAFE, el KPI principal debe mostrarse en LIBRAS (no kilos)
-  const cv = (document.getElementById('categoriaFilter')?.value || 'all').toString().toUpperCase();
+  const cv = (document.getElementById('categoriaFilter')?.value || 'HEMBRAS').toString().toUpperCase();
   const isCafe = (cv === 'CAFE') || ((sorted[0]?.tipo || '').toString().toUpperCase() === 'CAFE');
   const totalLibras = sorted.reduce((acc,d)=> acc + ((((d.unidad||'').toString().toUpperCase().includes('LIB')) ? (d.cantidad||0) : 0)), 0);
   const qtyMain = isCafe ? totalLibras : totalKilos;
@@ -4606,7 +4891,7 @@ function renderVentasUI(data) {
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
       <p class="text-sm font-medium text-slate-500">${isCafe ? 'Precio Promedio' : 'Cantidad Total'}</p>
       <h3 class="text-2xl font-bold text-slate-800 mt-1">${isCafe ? (fmtNum(precioPromMain, 2) + ' /Lb') : fmtNum(totalCant, 0)}</h3>
-      <p class="text-xs text-slate-400 mt-1">${isCafe ? ('Libras: ' + fmtNum(totalLibras, 0)) : 'Unidades mixtas (Cbzs/Libras)'}</p>
+      <p class="text-xs text-slate-400 mt-1">${isCafe ? ('Libras: ' + fmtNum(totalLibras, 0)) : 'Animales (Cbzs)'}</p>
     </div>
   `;
 
@@ -4719,33 +5004,37 @@ function detectModuleFromFilename(fileName) {
   return FILE_NAME_TO_MODULE[base] || null;
 }
 </script>
-  <script>
-async function autoLoadInforme() {
-  const res = await fetch("./data/sheets.json?ts=" + Date.now(), { cache: "no-store" });
-  if (!res.ok) throw new Error("No se encontró informe/data/sheets.json");
 
-  const list = await res.json();
-  const files = [];
+<script>
+async function autoLoadInformeFromRepo() {
+  try {
+    const res = await fetch("./data/sheets.json?ts=" + Date.now(), { cache: "no-store" });
+    if (!res.ok) throw new Error("No se encontró ./data/sheets.json");
 
-  for (const item of list) {
-    const r = await fetch("./" + item.csv + "?ts=" + Date.now(), { cache: "no-store" });
-    if (!r.ok) continue;
-    const text = await r.text();
+    const list = await res.json();
+    const files = [];
 
-    // Importante: el nombre del "File" ayuda a la detección de módulos
-    files.push(new File([text], item.fileName || (item.slug + ".csv"), { type: "text/csv" }));
+    for (const item of list) {
+      const r = await fetch("./" + item.csv + "?ts=" + Date.now(), { cache: "no-store" });
+      if (!r.ok) continue;
+
+      const text = await r.text();
+      // El nombre del File es CLAVE para que tu dashboard detecte el módulo
+      files.push(new File([text], item.fileName || (item.slug + ".csv"), { type: "text/csv" }));
+    }
+
+    if (typeof handleMultipleFiles !== "function") {
+      throw new Error("No existe handleMultipleFiles() en este dashboard.");
+    }
+
+    if (files.length) handleMultipleFiles(files);
+  } catch (e) {
+    console.error("AutoLoadInforme error:", e);
   }
-
-  if (typeof handleMultipleFiles !== "function") {
-    throw new Error("No existe handleMultipleFiles() en este dashboard.");
-  }
-
-  if (files.length) handleMultipleFiles(files);
 }
 
-window.addEventListener("load", () => {
-  autoLoadInforme().catch(console.error);
-});
+window.addEventListener("load", autoLoadInformeFromRepo);
 </script>
 
-</body></html>
+</body>
+</html>
