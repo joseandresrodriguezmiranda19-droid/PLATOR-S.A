@@ -17,14 +17,12 @@ D E T A L L E;V  A  C  A  S;;NOVILLA;C  R  I  A  S;;HEMBRAS;NOVILLOS;REPRODUCTOR
 F  I  N  C  A      LAS      C  U  C  H  I  LL  A  S;;;;;;;;;;;
 Inventario Inicial;64;12;29;22;42;43;0;5;1;2;220
 Compras;0;0;0;0;0;0;0;0;0;0;0
-Nacimiento;0;0;0;4;2;0;0;0;0;0;6
+Nacimiento;0;0;0;6;3;0;0;0;0;0;9
 Entradas;6;0;0;0;0;0;0;0;0;0;6
 Ventas;0;0;0;0;0;0;0;0;0;0;0
 Muertes;0;0;0;0;0;0;0;0;0;0;0
 Saladas;0;6;0;0;0;0;0;0;0;0;6
-Inventario Final;70;6;29;26;44;43;0;5;1;2;226
-;;;;;;;;;;;
-;;;;;;;;;;;
+Inventario Final;70;6;29;28;45;43;0;5;1;2;229
 ;;;;;;;;;;;
 INVENTARIO DE MOVIMIENTO DE GANADO BOVINO DE ENERO > DICIEMBRE DEL 2026;;;;;;;;;;;
 D E T A L L E;V  A  C  A  S;;NOVILLA;C  R  I  A  S;;HEMBRAS;NOVILLOS;REPRODUCTORES;;ANIMALES TRAB;EXISTENCIA
@@ -45,14 +43,12 @@ D E T A L L E;V  A  C  A  S;;NOVILLA;C  R  I  A  S;;HEMBRAS;NOVILLOS;REPRODUCTOR
 F  I  N  C  A      LOS       C  A  B  O  N  A  L  E  S;;;;;;;;;;;
 Inventario Inicial;126;54;56;54;72;140;0;26;3;4;535
 Compras;0;0;0;0;0;0;0;0;0;0;0
-Nacimiento;5;0;0;4;1;0;0;0;0;0;10
+Nacimiento;5;0;0;4;2;0;0;0;0;0;11
 Entradas;0;2;0;0;0;0;0;0;0;0;2
 Ventas;0;0;0;0;0;4;0;0;0;0;4
 Muertes;0;0;1;0;0;0;0;0;0;0;1
 Salidas;0;5;0;0;0;0;0;0;0;0;5
-Inventario Final;131;51;55;58;73;136;0;26;3;4;537
-;;;;;;;;;;;
-;;;;;;;;;;;
+Inventario Final;131;51;55;58;74;136;0;26;3;4;538
 ;;;;;;;;;;;
 INVENTARIO DE MOVIMIENTO DE GANADO BOVINO DE ENERO > DICIEMBRE DEL 2026;;;;;;;;;;;
 D E T A L L E;V  A  C  A  S;;NOVILLA;C  R  I  A  S;;HEMBRAS;NOVILLOS;REPRODUCTORES;;ANIMALES TRAB;EXISTENCIA
@@ -76,12 +72,11 @@ Compras;0;0;0;0;0;0;0;0;0;0;0
 Nacimiento;0;0;0;2;0;0;0;0;0;0;2
 Entradas;2;0;0;0;0;0;0;0;0;0;2
 Ventas;0;0;0;0;0;28;0;0;0;0;28
-Muertes;0;0;0;0;0;0;0;0;0;0;0
+Muertes;1;0;0;1;0;0;0;0;0;0;2
 Saladas;0;2;0;0;0;1;0;0;0;0;3
-Inventario Final;92;76;53;48;44;91;0;14;5;2;425
+Inventario Final;91;76;53;47;44;91;0;14;5;2;423
 ;;;;;;;;;;;
-TOTAL  ESTELI;310;133;137;138;172;271;16;47;9;14;1247
-;;;;;;;;;;;
+TOTAL  ESTELI;309;133;137;139;174;271;16;47;9;14;1249
 ;;;;;;;;;;;
 INVENTARIO DE MOVIMIENTO DE GANADO BOVINO DE ENERO > DICIEMBRE DEL 2026;;;;;;;;;;;
 D E T A L L E;V  A  C  A  S;;NOVILLA;C  R  I  A  S;;HEMBRAS;NOVILLOS;REPRODUCTORES;;ANIMALES TRAB;EXISTENCIA
@@ -98,4 +93,4 @@ Inventario Final;429;133;143;126;239;122;22;25;0;0;1239
 ;;;;;;;;;;;
 TOTAL   JALAPA;429;133;143;126;239;122;22;25;0;0;1239
 ;;;;;;;;;;;
-TOTAL GENERAL;739;266;280;264;411;393;38;72;9;14;2486
+TOTAL GENERAL;738;266;280;265;413;393;38;72;9;14;2488

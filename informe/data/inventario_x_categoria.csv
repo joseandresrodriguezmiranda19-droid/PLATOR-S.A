@@ -6,23 +6,23 @@ Sexo / Categoría;Existencia;E  N  T  R  A  D  A  S;;;S  A  L  I  D  A  S;;;Exis
 MACHOS;;;;;;;;
 -Novillos;16;;;;;;;16
 -Novillos Comp.;0;;;;;;;0
--Cría Machos;136;;2;;;;;138
+-Cría Machos;136;;4;;;1;;139
 -Reproductores;47;;;;;;;47
 -Toretes Reproduct;9;;;;;;;9
 -Bueyes;14;;;;;;;14
-SUB - TOTAL;222;0;2;0;0;0;0;224
+SUB - TOTAL;222;0;4;0;0;1;0;225
 HEMBRAS > Adultas;;;;;;;;
--Vacas Paridas;307;;;3;;;;310
--Vacas Secas;136;;;;;;3;133
+-Vacas Paridas;307;;;7;;1;;313
+-Vacas Secas;136;;;;;;7;129
 -Animales Descate;0;;;;;;;0
 -Nov. Vientre;137;;;;;;;137
-SUB - TOTAL;580;0;0;3;0;0;3;580
+SUB - TOTAL;580;0;0;7;0;1;7;579
 HEMBRAS > Menores;;;;;;;;
--Crías Hembras;171;;1;;;;;172
+-Crías Hembras;171;;3;;;;;174
 -Hembras Levante;271;;;;;;;271
-SUB - TOTAL;442;0;1;0;0;0;0;443
+SUB - TOTAL;442;0;3;0;0;0;0;445
 ;;;;;;;;
-TOTAL > ESTELI;1244;0;3;3;0;0;3;1247
+TOTAL > ESTELI;1244;0;7;7;0;2;7;1249
 INVENTARIOS DE GANADO BOVINO > FINCAS DE JALAPA;;;;;;;;
 Sexo / Categoría;Existencia;E  N  T  R  A  D  A  S;;;S  A  L  I  D  A  S;;;Existencia
 ;Inicial;Compras;Nacimientos;Traslado;Ventas;Muertos;Traslado;Final
@@ -45,7 +45,4 @@ SUB - TOTAL;360;0;1;0;0;0;0;361
 ;;;;;;;;
 TOTAL > JALAPA;1311;0;1;64;72;1;64;1239
 ;;;;;;;;
-TOTAL ESTELI Y JALAPA;2555;0;4;67;72;1;67;2486
-;;;;;;;;
-;;;;;;;;2486
-;;;;;;;;0
+TOTAL ESTELI Y JALAPA;2555;0;8;71;72;3;71;2488

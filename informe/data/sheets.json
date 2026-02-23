@@ -1,27 +1,9 @@
 [
   {
-    "sheet": "Ventas-2026",
-    "slug": "ventas_2026",
-    "csv": "data/ventas_2026.csv",
-    "fileName": "Ventas 2026.csv"
-  },
-  {
-    "sheet": "Inventario X Categoría",
-    "slug": "inventario_x_categoria",
-    "csv": "data/inventario_x_categoria.csv",
-    "fileName": "Inventario X Categoria.csv"
-  },
-  {
-    "sheet": "Muertes-2026",
-    "slug": "muertes_2026",
-    "csv": "data/muertes_2026.csv",
-    "fileName": "Muertes 2026.csv"
-  },
-  {
-    "sheet": "Nacimientos-2026",
-    "slug": "nacimientos_2026",
-    "csv": "data/nacimientos_2026.csv",
-    "fileName": "Nacimientos 2026.csv"
+    "sheet": "FLUJO DE GANADO X CATEGORIA",
+    "slug": "flujo_de_ganado_x_categoria",
+    "csv": "data/flujo_de_ganado_x_categoria.csv",
+    "fileName": "Flujo de Ganado x Categoria.csv"
   },
   {
     "sheet": "INVENTARIO ENTADA Y SALIDAS",
@@ -30,10 +12,22 @@
     "fileName": "INVENTARIO ENTADA Y SALIDAS.csv"
   },
   {
-    "sheet": "FLUJO DE GANADO X CATEGORIA",
-    "slug": "flujo_de_ganado_x_categoria",
-    "csv": "data/flujo_de_ganado_x_categoria.csv",
-    "fileName": "Flujo de Ganado x Categoria.csv"
+    "sheet": "Inventario X Categoría",
+    "slug": "inventario_x_categoria",
+    "csv": "data/inventario_x_categoria.csv",
+    "fileName": "Inventario X Categoria.csv"
+  },
+  {
+    "sheet": "Muertes",
+    "slug": "muertes",
+    "csv": "data/muertes.csv",
+    "fileName": "Muertes 2026.csv"
+  },
+  {
+    "sheet": "Nacimientos-2026",
+    "slug": "nacimientos_2026",
+    "csv": "data/nacimientos_2026.csv",
+    "fileName": "Nacimientos 2026.csv"
   },
   {
     "sheet": "PROYECION DE PARTOS",
@@ -46,5 +40,11 @@
     "slug": "destete_terneros",
     "csv": "data/destete_terneros.csv",
     "fileName": "Destete de Terneros.csv"
+  },
+  {
+    "sheet": "Ventas-2026",
+    "slug": "ventas_2026",
+    "csv": "data/ventas_2026.csv",
+    "fileName": "Ventas 2026.csv"
   }
 ]
