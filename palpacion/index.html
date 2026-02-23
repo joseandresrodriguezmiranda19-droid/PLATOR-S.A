@@ -14,6 +14,9 @@
   <!-- PapaParse (CSV) -->
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
+  <!-- SheetJS (Excel export) -->
+  <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
   <style>
     /* Scrollbar suave (opcional) */
     ::-webkit-scrollbar { width: 10px; height: 10px; }
@@ -316,6 +319,12 @@
               <option value="50" selected>50</option>
               <option value="40">40</option>
             </select>
+            <span class="hidden sm:inline-block w-px h-6 bg-slate-800/60 mx-1"></span>
+
+            <button id="btnExportXLSX" class="px-3 py-2 rounded-xl bg-slate-950/40 border border-slate-800 hover:bg-slate-900/40 active:scale-[.99]" title="Exportar a Excel">
+              Exportar Excel
+            </button>
+
 
             <button id="pagePrev" class="px-3 py-2 rounded-xl bg-slate-950/40 border border-slate-800 hover:bg-slate-900/40 active:scale-[.99]" title="Anterior">◀</button>
             <span id="pageInfo" class="text-xs text-slate-300 min-w-[120px] text-center">Página —</span>
@@ -356,6 +365,35 @@
       </footer>
     </main>
   </div>
+
+
+  
+
+
+<!-- Chart Zoom Modal -->
+  <div id="chartModal" class="hidden fixed inset-0 z-[999]">
+    <div id="chartModalBackdrop" class="absolute inset-0 bg-slate-950/70 backdrop-blur-sm opacity-0 transition-opacity duration-200"></div>
+
+    <div class="relative h-full w-full flex items-center justify-center p-3 sm:p-6">
+      <div id="chartModalPanel" class="w-[min(1200px,96vw)] h-[min(760px,90vh)] rounded-2xl border border-slate-800/60 bg-slate-950/80 shadow-2xl overflow-hidden flex flex-col opacity-0 scale-[.98] transition-all duration-200 ease-out">
+        <div class="px-4 py-3 border-b border-slate-800/60 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-slate-300">Vista ampliada:</span>
+            <span id="chartModalTitle" class="text-sm font-semibold text-slate-100">—</span>
+          </div>
+          <button id="chartModalClose" class="px-3 py-1.5 rounded-xl bg-slate-900/60 border border-slate-800/60 hover:bg-slate-800/60 text-sm">
+            Cerrar ✕
+          </button>
+        </div>
+        <div class="flex-1 p-3 sm:p-4">
+          <div id="chartModalCanvasWrap" class="w-full h-full rounded-xl border border-slate-800/50 bg-slate-900/30 overflow-hidden">
+            <!-- aquí se renderiza un canvas nuevo (no se mueve el original) -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
 
 <script>
   // =========================
@@ -669,6 +707,134 @@ let PAGE = 1;
   // Charts
   // =========================
   let chartEstado, chartEA, chartFincas, chartEdad, chartFPP;
+  // =========================
+  // Zoom de gráficos (click -> fullscreen) — versión nítida (re-render en canvas nuevo)
+  // =========================
+  const chartModal = document.getElementById('chartModal');
+  const chartModalBackdrop = document.getElementById('chartModalBackdrop');
+  const chartModalClose = document.getElementById('chartModalClose');
+  const chartModalTitle = document.getElementById('chartModalTitle');
+  const chartModalCanvasWrap = document.getElementById('chartModalCanvasWrap');
+  const chartModalPanel = document.getElementById('chartModalPanel');
+
+  let __modalChart = null;
+
+  function deepCloneKeepFns(obj) {
+    if (obj === null || obj === undefined) return obj;
+    const t = typeof obj;
+    if (t !== 'object') return obj;
+    if (obj instanceof Date) return new Date(obj.getTime());
+    if (Array.isArray(obj)) return obj.map(deepCloneKeepFns);
+    const out = {};
+    for (const k in obj) {
+      const v = obj[k];
+      out[k] = (typeof v === 'function') ? v : deepCloneKeepFns(v);
+    }
+    return out;
+  }
+
+  function getChartTitleFromCanvas(canvas) {
+    try {
+      const card = canvas.closest('div[class*="rounded-2xl"], section[class*="rounded-2xl"]');
+      const h = card ? card.querySelector('h3') : null;
+      return (h && h.textContent) ? h.textContent.trim() : (canvas.id || 'Gráfico');
+    } catch { return canvas.id || 'Gráfico'; }
+  }
+
+  function animateOpen() {
+    if (!chartModal || !chartModalBackdrop || !chartModalPanel) return;
+    chartModalBackdrop.classList.remove('opacity-0');
+    chartModalBackdrop.classList.add('opacity-100');
+    chartModalPanel.classList.remove('opacity-0', 'scale-[.98]');
+    chartModalPanel.classList.add('opacity-100', 'scale-100');
+  }
+
+  function animateClose() {
+    if (!chartModal || !chartModalBackdrop || !chartModalPanel) return;
+    chartModalBackdrop.classList.add('opacity-0');
+    chartModalBackdrop.classList.remove('opacity-100');
+    chartModalPanel.classList.add('opacity-0', 'scale-[.98]');
+    chartModalPanel.classList.remove('opacity-100', 'scale-100');
+  }
+
+  function destroyModalChart() {
+    try { if (__modalChart) __modalChart.destroy(); } catch {}
+    __modalChart = null;
+    if (chartModalCanvasWrap) chartModalCanvasWrap.innerHTML = '';
+  }
+
+  function openChartModalFromCanvas(canvas) {
+    if (!canvas || !chartModal || !chartModalCanvasWrap) return;
+
+    const srcChart = (window.Chart && window.Chart.getChart) ? Chart.getChart(canvas) : null;
+    if (!srcChart) return;
+
+    destroyModalChart();
+
+    const modalCanvas = document.createElement('canvas');
+    modalCanvas.id = 'chartModalCanvas';
+    modalCanvas.style.width = '100%';
+    modalCanvas.style.height = '100%';
+    modalCanvas.style.display = 'block';
+    chartModalCanvasWrap.appendChild(modalCanvas);
+
+    const cfg = {
+      type: srcChart.config.type,
+      data: deepCloneKeepFns(srcChart.config.data),
+      options: deepCloneKeepFns(srcChart.config.options || {})
+    };
+
+    cfg.options = cfg.options || {};
+    cfg.options.responsive = true;
+    cfg.options.maintainAspectRatio = false;
+    cfg.options.devicePixelRatio = Math.min(3, (window.devicePixelRatio || 1) * 1.5);
+
+    if (chartModalTitle) chartModalTitle.textContent = getChartTitleFromCanvas(canvas);
+
+    chartModal.classList.remove('hidden');
+    document.body.classList.add('overflow-hidden');
+    requestAnimationFrame(animateOpen);
+
+    try {
+      __modalChart = new Chart(modalCanvas, cfg);
+      requestAnimationFrame(() => __modalChart && __modalChart.resize());
+      setTimeout(() => __modalChart && __modalChart.resize(), 230);
+    } catch (e) {
+      console.error(e);
+      destroyModalChart();
+    }
+  }
+
+  function closeChartModal(force = false) {
+    if (!chartModal) return;
+
+    if (!force) animateClose();
+
+    setTimeout(() => {
+      chartModal.classList.add('hidden');
+      document.body.classList.remove('overflow-hidden');
+      destroyModalChart();
+    }, force ? 0 : 210);
+  }
+
+  if (chartModalBackdrop) chartModalBackdrop.addEventListener('click', () => closeChartModal());
+  if (chartModalClose) chartModalClose.addEventListener('click', () => closeChartModal());
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && chartModal && !chartModal.classList.contains('hidden')) closeChartModal();
+  });
+
+  document.addEventListener('click', (e) => {
+    const c = e.target && e.target.closest ? e.target.closest('canvas') : null;
+    if (!c || !c.id) return;
+    if (!c.id.startsWith('chart')) return;
+    if (c.id === 'chartModalCanvas') return;
+
+    if (chartModal && !chartModal.classList.contains('hidden') && (e.target.closest && e.target.closest('#chartModal'))) return;
+
+    openChartModalFromCanvas(c);
+  });
+
+
 
   function destroyIf(c) { if (c) c.destroy(); }
 
@@ -980,7 +1146,77 @@ let PAGE = 1;
     setDisabled(pageNextEl, PAGE >= totalPages);
   }
 
+
+  // =========================
+  // Export Excel (Detalle filtrado)
+  // =========================
+  function exportDetalleToXLSX() {
+    if (!window.XLSX) {
+      alert('No se encontró la librería para exportar a Excel (XLSX). Revisá tu conexión a internet.');
+      return;
+    }
+
+    // Exporta TODO el detalle filtrado (no solo la página actual), respetando el orden seleccionado
+    const rows = sortRows(applyFilters());
+
+    const headers = [
+      "Número",
+      "Nombre",
+      "Estado Actual",
+      "Estado Reproducción",
+      "Gest.",
+      "TPreñez",
+      "Edad (texto)",
+      "Fecha Preñez",
+      "Fecha Primer Parto",
+      "Partos",
+      "Crías",
+      "Días Abiertos"
+    ];
+
+    const aoa = [headers];
+
+    for (const r of rows) {
+      aoa.push([
+        r.Numero ?? "",
+        r.Nombre ?? "",
+        r.EA ?? "",
+        r.EstadoReprod ?? "",
+        (r.Gest ?? "") === null ? "" : (r.Gest ?? ""),
+        r.TPreñez ?? "",
+        r.EdadTexto ?? "",
+        r.FPreñ ?? "",
+        r.FPP ?? "",
+        r.P ?? "",
+        r.C ?? "",
+        r.DAb ?? ""
+      ]);
+    }
+
+    const ws = XLSX.utils.aoa_to_sheet(aoa);
+
+    ws['!cols'] = [
+      { wch: 14 }, { wch: 18 }, { wch: 18 }, { wch: 20 }, { wch: 8 }, { wch: 10 },
+      { wch: 16 }, { wch: 14 }, { wch: 16 }, { wch: 10 }, { wch: 10 }, { wch: 14 }
+    ];
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Detalle");
+
+    const safe = (s) => String(s || '').replace(/[\/:*?"<>|]+/g, '').trim();
+    const fincaPart = safe((MS?.Finca?.selected && MS.Finca.selected.size === 1) ? [...MS.Finca.selected][0] : (META?.titulo || ''));
+    const today = new Date().toISOString().slice(0,10);
+    const fileName = `Detalle_Palpacion${fincaPart ? '_' + fincaPart : ''}_${today}.xlsx`;
+
+    XLSX.writeFile(wb, fileName);
+  }
+
+  const btnExportXLSX = document.getElementById('btnExportXLSX');
+  if (btnExportXLSX) btnExportXLSX.addEventListener('click', exportDetalleToXLSX);
+
+
   function render() {
+    closeChartModal(true);
     const rows = applyFilters();
     updateKPIs(rows);
     buildCharts(rows);
@@ -1522,7 +1758,6 @@ function loadCSVFile(file) {
   }
   render();
 </script>
-  
   <script>
 async function autoLoadFromRepo() {
   const finRes = await fetch("./data/fincas.json?ts=" + Date.now(), { cache: "no-store" });
