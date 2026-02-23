@@ -150,6 +150,14 @@
             </label>
 
             <label class="block sm:col-span-2">
+              <span class="text-xs text-slate-300">Días Abiertos — rango</span>
+              <div class="mt-2 grid grid-cols-2 gap-2">
+                <input id="fDAbMin" type="number" step="1" placeholder="Mín" class="w-full rounded-xl bg-slate-950/40 border border-slate-800 px-3 py-2 outline-none focus:ring-2 focus:ring-slate-400/40">
+                <input id="fDAbMax" type="number" step="1" placeholder="Máx" class="w-full rounded-xl bg-slate-950/40 border border-slate-800 px-3 py-2 outline-none focus:ring-2 focus:ring-slate-400/40">
+              </div>
+            </label>
+
+            <label class="block sm:col-span-2">
               <span class="text-xs text-slate-300">Buscar (Número / Nombre)</span>
               <input id="fSearch" type="text" placeholder="Ej: 003388176" class="mt-1 w-full rounded-xl bg-slate-950/40 border border-slate-800 px-3 py-2 outline-none focus:ring-2 focus:ring-slate-400/40">
             </label>
@@ -228,8 +236,7 @@
           </div>
         </div>
       </section>
-
-      <!-- Charts -->
+<!-- Charts -->
       <section class="grid grid-cols-1 lg:grid-cols-12 gap-4 items-start">
         <div class="lg:col-span-5 rounded-2xl border border-slate-800/60 bg-slate-900/40 p-4">
           <div class="flex items-center justify-between">
@@ -250,6 +257,18 @@
             <canvas id="chartEA" height="250"></canvas>
           </div>
         </div>
+
+
+        <div class="lg:col-span-12 rounded-2xl border border-slate-800/60 bg-slate-900/40 p-4">
+          <div class="flex items-center justify-between">
+            <h3 class="font-semibold">Distribución — Fincas</h3>
+            <span id="chartFincasNote" class="text-xs text-slate-400"></span>
+          </div>
+          <div class="mt-3">
+            <canvas id="chartFincas" height="230"></canvas>
+          </div>
+        </div>
+
 
         <div class="lg:col-span-7 rounded-2xl border border-slate-800/60 bg-slate-900/40 p-4">
           <div class="flex items-center justify-between">
@@ -351,6 +370,8 @@
   // UI refs
   const fEdadMin = document.getElementById('fEdadMin');
   const fEdadMax = document.getElementById('fEdadMax');
+  const fDAbMin = document.getElementById('fDAbMin');
+  const fDAbMax = document.getElementById('fDAbMax');
   const fSearch = document.getElementById('fSearch');
   const tSort = document.getElementById('tSort');
   const pageSizeEl = document.getElementById('pageSize');
@@ -577,9 +598,19 @@ let PAGE = 1;
       const maxA = Math.ceil(Math.max(...ages));
       fEdadMin.placeholder = String(minA);
       fEdadMax.placeholder = String(maxA);
+
+      const dabsAll = RAW.map(d => d.DAb).filter(v => typeof v === 'number' && !Number.isNaN(v));
+      if (fDAbMin && fDAbMax && dabsAll.length) {
+        const minD = Math.floor(Math.min(...dabsAll));
+        const maxD = Math.ceil(Math.max(...dabsAll));
+        fDAbMin.placeholder = String(minD);
+        fDAbMax.placeholder = String(maxD);
+      }
     } else {
       fEdadMin.placeholder = '';
       fEdadMax.placeholder = '';
+      if (fDAbMin) fDAbMin.placeholder = '';
+      if (fDAbMax) fDAbMax.placeholder = '';
     }
   }
 
@@ -592,6 +623,8 @@ let PAGE = 1;
     const q = fSearch.value.trim().toLowerCase();
     const min = parseFloat(fEdadMin.value);
     const max = parseFloat(fEdadMax.value);
+    const dabMin = fDAbMin ? parseFloat(fDAbMin.value) : NaN;
+    const dabMax = fDAbMax ? parseFloat(fDAbMax.value) : NaN;
 
     return RAW.filter(d => {
       if (fincaSel.length && !fincaSel.includes(d.Finca || '')) return false;
@@ -601,6 +634,9 @@ let PAGE = 1;
 
       if (!Number.isNaN(min) && typeof d.EdadAnios === 'number' && d.EdadAnios < min) return false;
       if (!Number.isNaN(max) && typeof d.EdadAnios === 'number' && d.EdadAnios > max) return false;
+
+      if (!Number.isNaN(dabMin) && typeof d.DAb === 'number' && d.DAb < dabMin) return false;
+      if (!Number.isNaN(dabMax) && typeof d.DAb === 'number' && d.DAb > dabMax) return false;
 
       if (q) {
         const hay = `${d.Numero} ${d.Nombre}`.toLowerCase();
@@ -632,7 +668,7 @@ let PAGE = 1;
   // =========================
   // Charts
   // =========================
-  let chartEstado, chartEA, chartEdad, chartFPP;
+  let chartEstado, chartEA, chartFincas, chartEdad, chartFPP;
 
   function destroyIf(c) { if (c) c.destroy(); }
 
@@ -703,6 +739,45 @@ let PAGE = 1;
       }
     });
     document.getElementById('chartEANote').textContent = `${eaLabels.length} categorías`;
+    // Fincas (bar horizontal)
+    const byFinca = new Map();
+    for (const r of rows) {
+      const k = (r.Finca && String(r.Finca).trim()) ? String(r.Finca).trim() : 'Sin dato';
+      byFinca.set(k, (byFinca.get(k) || 0) + 1);
+    }
+    const fincaLabels = [...byFinca.keys()].sort((a,b)=>String(a).localeCompare(String(b)));
+    const fincaVals = fincaLabels.map(k => byFinca.get(k));
+
+    destroyIf(chartFincas);
+    chartFincas = new Chart(document.getElementById('chartFincas'), {
+      type: 'bar',
+      data: {
+        labels: fincaLabels,
+        datasets: [{
+          label: 'Animales',
+          data: fincaVals,
+          backgroundColor: 'rgba(168,85,247,0.55)',
+          borderColor: 'rgba(168,85,247,0.95)',
+          borderWidth: 1
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: 'y',
+        scales: {
+          x: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(148,163,184,.15)' }, beginAtZero: true },
+          y: { ticks: { color: '#cbd5e1' }, grid: { color: 'rgba(148,163,184,.10)' } }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: { callbacks: { label: (ctx) => ` ${ctx.parsed.x} animales` } }
+        }
+      }
+    });
+    const finNote = document.getElementById('chartFincasNote');
+    if (finNote) finNote.textContent = `${fincaLabels.length} fincas`;
+
 
     // Edad hist (1 año)
     const ages = rows.map(r => r.EdadAnios).filter(v => typeof v === 'number' && v > 0);
@@ -913,7 +988,7 @@ let PAGE = 1;
   }
 
   // Events (inputs normales)
-  [fEdadMin, fEdadMax, fSearch, tSort].forEach(el => {
+  [fEdadMin, fEdadMax, fDAbMin, fDAbMax, fSearch, tSort].filter(Boolean).forEach(el => {
     const rer = () => { PAGE = 1; render(); };
     el.addEventListener('input', rer);
     el.addEventListener('change', rer);
@@ -939,6 +1014,8 @@ let PAGE = 1;
 
     fEdadMin.value = '';
     fEdadMax.value = '';
+    if (fDAbMin) fDAbMin.value = '';
+    if (fDAbMax) fDAbMax.value = '';
     fSearch.value = '';
     tSort.value = 'EdadAnios_desc';
     render();
@@ -1132,6 +1209,8 @@ let PAGE = 1;
     MS.TPre.selected.clear();
     fEdadMin.value = '';
     fEdadMax.value = '';
+    if (fDAbMin) fDAbMin.value = '';
+    if (fDAbMax) fDAbMax.value = '';
     fSearch.value = '';
     tSort.value = 'EdadAnios_desc';
     PAGE = 1;
@@ -1298,6 +1377,8 @@ function loadCSVFile(file) {
             MS.TPre.selected.clear();
             fEdadMin.value = '';
             fEdadMax.value = '';
+            if (fDAbMin) fDAbMin.value = '';
+            if (fDAbMax) fDAbMax.value = '';
             fSearch.value = '';
             tSort.value = 'EdadAnios_desc';
 
@@ -1425,6 +1506,8 @@ function loadCSVFile(file) {
     if (typeof s.q === 'string') fSearch.value = s.q;
     if (typeof s.EdadMin === 'string') fEdadMin.value = s.EdadMin;
     if (typeof s.EdadMax === 'string') fEdadMax.value = s.EdadMax;
+    if (typeof s.DAbMin === 'string' && fDAbMin) fDAbMin.value = s.DAbMin;
+    if (typeof s.DAbMax === 'string' && fDAbMax) fDAbMax.value = s.DAbMax;
     if (typeof s.sort === 'string') tSort.value = s.sort;
     if (typeof s.pageSize === 'string' && pageSizeEl) pageSizeEl.value = s.pageSize;
   }
@@ -1439,6 +1522,7 @@ function loadCSVFile(file) {
   }
   render();
 </script>
+  
   <script>
 async function autoLoadFromRepo() {
   const finRes = await fetch("./data/fincas.json?ts=" + Date.now(), { cache: "no-store" });
