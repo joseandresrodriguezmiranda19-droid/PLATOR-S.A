@@ -12,7 +12,7 @@
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-    body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+    body { font-family: 'Inter', sans-serif; background: radial-gradient(1200px 600px at 15% 0%, rgba(59,130,246,0.14), rgba(59,130,246,0.00) 60%), radial-gradient(900px 500px at 85% 10%, rgba(14,165,233,0.10), rgba(14,165,233,0.00) 55%), linear-gradient(180deg, #eff6ff 0%, #f7fbff 45%, #f8fafc 100%); background-attachment: fixed; }
     .sidebar-item.active { background-color: rgba(255,255,255,0.10); color: white; border-left: 4px solid #60a5fa; }
     .drop-zone { border: 2px dashed #334155; transition: all 0.3s ease; background-color: rgba(255,255,255,0.02); }
     .drop-zone.over { border-color: #60a5fa; background-color: rgba(96, 165, 250, 0.12); }
@@ -38,7 +38,7 @@
       background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,250,252,0.96));
     }
 
-    @media print { .no-print { display: none; } }
+    @media print { body { background: #ffffff !important; } .no-print { display: none; } }
   
 /* Animación al cambiar de sección */
 @keyframes fadeInUp {
@@ -2641,11 +2641,11 @@ function renderInventarioGeneralUI(data, allData) {
     { label: 'Existencia Final', value: totals.existencia_final, icon: '📌' },
     { label: 'Variación', value: variacion, icon: variacion >= 0 ? '📈' : '📉' },
 
-    { label: 'Entradas (Transferencia de clase)', value: totals.traslado_entradas, icon: '🔁' },
+    { label: 'Entradas (transferencia de clase)', value: totals.traslado_entradas, icon: '🔁' },
     { label: 'Nacimientos', value: totals.nacimientos, icon: '🍼' },
     { label: 'Compras', value: totals.compras, icon: '🧾' },
 
-    { label: 'Salidas (Transferencia de clase)', value: totals.traslado_salidas, icon: '🔁' },
+    { label: 'Salidas (transferencia de clase)', value: totals.traslado_salidas, icon: '🔁' },
     { label: 'Muertes', value: totals.muertes, icon: '⚠️' },
     { label: 'Ventas', value: totals.ventas, icon: '💰' },
 
@@ -2653,11 +2653,11 @@ function renderInventarioGeneralUI(data, allData) {
   ];
 
   const kpiHtml = kpis.map(k => `
-    <div class="bg-white rounded-xl py-3 px-4 shadow-sm border border-slate-200/70">
+    <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200/70">
       <div class="flex items-center justify-between">
         <div>
-          <div class="text-[11px] uppercase tracking-wide text-slate-500 leading-tight truncate" title="${k.label}">${k.label}</div>
-          <div class="mt-0.5 text-xl font-semibold text-slate-800 leading-tight">${k.fmt === 'pct' ? fmtPct(k.value, 1) : fmtNum(k.value)}</div>
+          <div class="text-[11px] uppercase tracking-wide text-slate-500">${k.label}</div>
+          <div class="mt-1 text-xl font-semibold text-slate-800">${k.fmt === 'pct' ? fmtPct(k.value, 1) : fmtNum(k.value)}</div>
         </div>
         <div class="text-xl">${k.icon}</div>
       </div>
@@ -2775,7 +2775,7 @@ function renderInventarioGeneralUI(data, allData) {
       </div>
 
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <div class="bg-white rounded-xl py-3 px-4 shadow-sm border border-slate-200/70">
+        <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200/70">
           <div class="flex items-center justify-between mb-3">
             <h3 class="font-semibold text-slate-800">Existencia Final por Categoría</h3>
             <div class="text-xs text-slate-500">${yearLabel}</div>
@@ -2788,7 +2788,7 @@ function renderInventarioGeneralUI(data, allData) {
           </div>
         </div>
 
-        <div class="bg-white rounded-xl py-3 px-4 shadow-sm border border-slate-200/70">
+        <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200/70">
           <div class="flex items-center justify-between mb-3">
             <h3 class="font-semibold text-slate-800">Entradas vs Salidas (Totales)</h3>
             <div class="text-xs text-slate-500">${yearLabel}</div>
@@ -2799,7 +2799,7 @@ function renderInventarioGeneralUI(data, allData) {
         </div>
       </div>
 
-      <div class="bg-white rounded-xl py-3 px-4 shadow-sm border border-slate-200/70">
+      <div class="bg-white rounded-xl p-4 shadow-sm border border-slate-200/70">
         <div class="flex items-center justify-between mb-3">
           <h3 class="font-semibold text-slate-800">Detalle de Movimientos por Categoría</h3>
           <div class="text-xs text-slate-500">${fincas.length ? `Zonas/Fincas: ${fincas.join(', ')}` : ''}</div>
