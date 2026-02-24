@@ -1161,7 +1161,7 @@ function processInventarioGeneral(rows) {
       else if (s === 'NACIMIENTOS' && (maj.includes('ENTR') || maj.includes('ENTRA'))) idx.nacimientos = c;
       else if (s === 'VENTAS' && (maj.includes('SALID') || maj.includes('SALIDA'))) idx.ventas = c;
       else if (s === 'MUERTOS' && (maj.includes('SALID') || maj.includes('SALIDA'))) idx.muertes = c;
-      else if (s === 'TRASLADO') {
+      else if (s === 'TRASLADO' || s.includes('TRASL') || s.includes('TRANSF') || s.includes('TRANSFER')) {
         if (maj.includes('ENTR') || maj.includes('ENTRA')) idx.entradas = c;
         else if (maj.includes('SALID') || maj.includes('SALIDA')) idx.salidas = c;
       }
@@ -2640,11 +2640,16 @@ function renderInventarioGeneralUI(data, allData) {
     { label: 'Existencia Inicial', value: totals.existencia_inicial, icon: '🐄' },
     { label: 'Existencia Final', value: totals.existencia_final, icon: '📌' },
     { label: 'Variación', value: variacion, icon: variacion >= 0 ? '📈' : '📉' },
+
+    { label: 'Entradas (Transferencia de clase)', value: totals.traslado_entradas, icon: '🔁' },
     { label: 'Nacimientos', value: totals.nacimientos, icon: '🍼' },
-    { label: 'Muertes', value: totals.muertes, icon: '⚠️' },
     { label: 'Compras', value: totals.compras, icon: '🧾' },
+
+    { label: 'Salidas (Transferencia de clase)', value: totals.traslado_salidas, icon: '🔁' },
+    { label: 'Muertes', value: totals.muertes, icon: '⚠️' },
     { label: 'Ventas', value: totals.ventas, icon: '💰' },
-    { label: 'Crecimiento Neto (%)', value: (totals.existencia_inicial ? (variacion / totals.existencia_inicial) * 100 : 0), icon: (variacion >= 0 ? '📊' : '📉'), fmt: 'pct', },
+
+    { label: 'Crecimiento Neto (%)', value: (totals.existencia_inicial ? (variacion / totals.existencia_inicial) * 100 : 0), icon: (variacion >= 0 ? '📊' : '📉'), fmt: 'pct' },
   ];
 
   const kpiHtml = kpis.map(k => `
@@ -2765,7 +2770,7 @@ function renderInventarioGeneralUI(data, allData) {
 
   content.innerHTML = `
     <div class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
         ${kpiHtml}
       </div>
 
