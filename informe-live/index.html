@@ -5006,35 +5006,174 @@ function detectModuleFromFilename(fileName) {
 </script>
 
 <script>
-async function autoLoadInformeFromRepo() {
-  try {
-    const res = await fetch("./data/sheets.json?ts=" + Date.now(), { cache: "no-store" });
-    if (!res.ok) throw new Error("No se encontró ./data/sheets.json");
+/** ====== CONFIG ====== **/
+const API_BASE = "https://plator-api.joseandresrodriguezmiranda19.workers.dev";
 
-    const list = await res.json();
-    const files = [];
-
-    for (const item of list) {
-      const r = await fetch("./" + item.csv + "?ts=" + Date.now(), { cache: "no-store" });
-      if (!r.ok) continue;
-
-      const text = await r.text();
-      // El nombre del File es CLAVE para que tu dashboard detecte el módulo
-      files.push(new File([text], item.fileName || (item.slug + ".csv"), { type: "text/csv" }));
-    }
-
-    if (typeof handleMultipleFiles !== "function") {
-      throw new Error("No existe handleMultipleFiles() en este dashboard.");
-    }
-
-    if (files.length) handleMultipleFiles(files);
-  } catch (e) {
-    console.error("AutoLoadInforme error:", e);
-  }
+/** ====== Helpers ====== **/
+function apiBase() {
+  return API_BASE.replace(/\/+$/,''); // quita '/' al final si existiera
+}
+function normKey(s="") {
+  return (s||"")
+    .toString()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")  // sin acentos
+    .toUpperCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+function slugify(s="") {
+  return (s||"")
+    .toString()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 80) || "sheet";
+}
+function canonicalFilename(sheetName) {
+  const k = normKey(sheetName);
+  if (k.includes("INVENTARIO") && k.includes("CATEGOR")) return "Inventario X Categoria.csv";
+  if (k.includes("FLUJO") && k.includes("CATEGOR")) return "Flujo de Ganado x Categoria.csv";
+  if ((k.includes("ENTRADA") && k.includes("SALIDA")) || k.includes("MOVIMIENTO")) return "Inventario Entradas y Salidas.csv";
+  if (k.includes("NACIM")) return "Nacimientos 2026.csv";
+  if (k.includes("MUERT")) return "Muertes 2026.csv";
+  if (k.includes("DESTETE")) return "Destete de Terneros.csv";
+  if ((k.includes("PROYEC") || k.includes("PROYECION")) && k.includes("PART")) return "Proyeccion de Partos.csv";
+  if (k.includes("VENTAS")) return "Ventas 2026.csv";
+  return `${sheetName}.csv`;
 }
 
-window.addEventListener("load", autoLoadInformeFromRepo);
-</script>
+async function kvGet(key) {
+  const url = `${apiBase()}/api/${key}?ts=${Date.now()}`;
+  const r = await fetch(url, { cache: "no-store" });
+  if (!r.ok) throw new Error(`GET ${key} -> ${r.status}`);
+  return await r.text();
+}
 
+async function kvUpload(items, token) {
+  const r = await fetch(`${apiBase()}/api/upload`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Upload-Token": token
+    },
+    body: JSON.stringify({ items })
+  });
+  if (!r.ok) throw new Error(`UPLOAD -> ${r.status}`);
+  return await r.json();
+}
+
+/** ====== Load from KV ====== **/
+async function autoLoadInformeFromKV() {
+  const manifestText = await kvGet("informe/sheets.json");
+  const list = JSON.parse(manifestText);
+
+  const files = [];
+  for (const item of list) {
+    const csvText = await kvGet(`informe/csv/${item.slug}.csv`);
+    files.push(new File([csvText], item.fileName || (item.slug + ".csv"), { type: "text/csv" }));
+  }
+
+  if (typeof handleMultipleFiles !== "function") {
+    throw new Error("No existe handleMultipleFiles() en este dashboard.");
+  }
+  if (files.length) handleMultipleFiles(files);
+
+  const lastUpdate = document.getElementById("lastUpdate");
+  if (lastUpdate) lastUpdate.innerText = `Cargado desde la nube (KV) — ${new Date().toLocaleString()}`;
+}
+
+/** ====== Publish Excel to KV ====== **/
+async function publishInformeExcelToKV(file, token) {
+  if (!token) throw new Error("Falta la clave (UPLOAD_TOKEN).");
+
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf, { type: "array" });
+
+  const items = [];
+  const manifest = [];
+
+  for (const sheetName of wb.SheetNames) {
+    const ws = wb.Sheets[sheetName];
+    if (!ws) continue;
+
+    // CSV con separador ; (tu dashboard parsea con ;)
+    let csvText = XLSX.utils.sheet_to_csv(ws, { FS: ";", blankrows: false });
+    csvText = (csvText || "").trim();
+    if (!csvText) continue;
+
+    const slug = slugify(sheetName);
+    const fileName = canonicalFilename(sheetName);
+
+    manifest.push({ sheet: sheetName, slug, fileName });
+    items.push({ key: `informe/csv/${slug}.csv`, value: csvText + "\n" });
+  }
+
+  items.push({ key: "informe/sheets.json", value: JSON.stringify(manifest) });
+
+  return await kvUpload(items, token);
+}
+
+/** ====== UI button (Publish) ====== **/
+function injectPublishUI() {
+  const dropZone = document.getElementById("dropZone");
+  if (!dropZone) return;
+
+  const box = document.createElement("div");
+  box.className = "mt-3 flex flex-col gap-2";
+
+  box.innerHTML = `
+    <div class="flex flex-wrap items-center gap-2">
+      <input id="kvExcelInput" type="file" accept=".xls,.xlsx" class="hidden" />
+      <input id="kvToken" type="password" placeholder="Clave para publicar (UPLOAD_TOKEN)"
+        class="px-3 py-2 rounded-xl bg-slate-900/40 border border-white/10 text-slate-100 text-xs min-w-[240px]" />
+      <button id="btnPublishKV"
+        class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold">
+        Publicar Excel (en línea)
+      </button>
+      <span id="kvStatus" class="text-[10px] text-slate-300/80"></span>
+    </div>
+    <div class="text-[10px] text-slate-400/80 leading-relaxed">
+      Esto guarda el Excel convertido en la nube (Cloudflare KV). Todos verán lo actualizado al abrir el link.
+    </div>
+  `;
+
+  dropZone.parentElement.appendChild(box);
+
+  const excelInput = box.querySelector("#kvExcelInput");
+  const tokenInput = box.querySelector("#kvToken");
+  const btn = box.querySelector("#btnPublishKV");
+  const status = box.querySelector("#kvStatus");
+
+  btn.addEventListener("click", () => excelInput.click());
+
+  excelInput.addEventListener("change", async () => {
+    const f = excelInput.files?.[0];
+    if (!f) return;
+
+    status.textContent = "Publicando...";
+    try {
+      await publishInformeExcelToKV(f, tokenInput.value.trim());
+      status.textContent = "✅ Publicado. Cargando...";
+      await autoLoadInformeFromKV();
+      status.textContent = "✅ Listo (actualizado para todos).";
+    } catch (e) {
+      console.error(e);
+      status.textContent = "❌ Error (clave o Worker/KV).";
+    } finally {
+      excelInput.value = "";
+    }
+  });
+}
+
+/** ====== Start ====== **/
+window.addEventListener("load", async () => {
+  // 1) Intenta cargar desde KV (si aún no has publicado, dará 404 y es normal)
+  try { await autoLoadInformeFromKV(); } catch (e) { console.warn("Aún no hay datos en KV:", e); }
+  // 2) Agrega el botón de publicar
+  injectPublishUI();
+});
+</script>
+  
 </body>
 </html>
