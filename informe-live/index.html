@@ -12,7 +12,7 @@
 
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap');
-    body { font-family: 'Inter', sans-serif; background: radial-gradient(1200px 600px at 15% 0%, rgba(59,130,246,0.14), rgba(59,130,246,0.00) 60%), radial-gradient(900px 500px at 85% 10%, rgba(14,165,233,0.10), rgba(14,165,233,0.00) 55%), linear-gradient(180deg, #eff6ff 0%, #f7fbff 45%, #f8fafc 100%); background-attachment: fixed; }
+    body { font-family: 'Inter', sans-serif; background-image: radial-gradient(1200px 700px at 18% 0%, rgba(59,130,246,0.32), rgba(59,130,246,0.00) 60%), radial-gradient(900px 600px at 88% 12%, rgba(14,165,233,0.26), rgba(14,165,233,0.00) 55%), linear-gradient(180deg, #dbeafe 0%, #eef6ff 38%, #e2e8f0 100%) !important; background-attachment: fixed; }
     .sidebar-item.active { background-color: rgba(255,255,255,0.10); color: white; border-left: 4px solid #60a5fa; }
     .drop-zone { border: 2px dashed #334155; transition: all 0.3s ease; background-color: rgba(255,255,255,0.02); }
     .drop-zone.over { border-color: #60a5fa; background-color: rgba(96, 165, 250, 0.12); }
@@ -59,10 +59,12 @@
 .chart-pop {
   animation: chartIn 520ms cubic-bezier(.2,.8,.2,1) both;
 }
+
+    html, body { min-height: 100%; background-color: #dbeafe !important; }
 </style>
 </head>
 
-<body class="flex h-screen overflow-hidden bg-gradient-to-br from-slate-50 via-blue-50 to-slate-100">
+<body class="flex h-screen overflow-hidden">
 
   <!-- SIDEBAR -->
   <aside class="w-72 bg-gradient-to-b from-slate-900 to-slate-950 border-r border-slate-800 flex flex-col no-print">
