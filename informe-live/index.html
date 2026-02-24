@@ -2653,13 +2653,13 @@ function renderInventarioGeneralUI(data, allData) {
   ];
 
   const kpiHtml = kpis.map(k => `
-    <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200/70">
+    <div class="bg-white rounded-xl py-3 px-4 shadow-sm border border-slate-200/70">
       <div class="flex items-center justify-between">
         <div>
-          <div class="text-xs uppercase tracking-wide text-slate-500">${k.label}</div>
-          <div class="mt-1 text-2xl font-semibold text-slate-800">${k.fmt === 'pct' ? fmtPct(k.value, 1) : fmtNum(k.value)}</div>
+          <div class="text-[11px] uppercase tracking-wide text-slate-500 leading-tight truncate" title="${k.label}">${k.label}</div>
+          <div class="mt-0.5 text-xl font-semibold text-slate-800 leading-tight">${k.fmt === 'pct' ? fmtPct(k.value, 1) : fmtNum(k.value)}</div>
         </div>
-        <div class="text-2xl">${k.icon}</div>
+        <div class="text-xl">${k.icon}</div>
       </div>
     </div>
   `).join('');
@@ -2775,7 +2775,7 @@ function renderInventarioGeneralUI(data, allData) {
       </div>
 
       <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200/70">
+        <div class="bg-white rounded-xl py-3 px-4 shadow-sm border border-slate-200/70">
           <div class="flex items-center justify-between mb-3">
             <h3 class="font-semibold text-slate-800">Existencia Final por Categoría</h3>
             <div class="text-xs text-slate-500">${yearLabel}</div>
@@ -2788,7 +2788,7 @@ function renderInventarioGeneralUI(data, allData) {
           </div>
         </div>
 
-        <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200/70">
+        <div class="bg-white rounded-xl py-3 px-4 shadow-sm border border-slate-200/70">
           <div class="flex items-center justify-between mb-3">
             <h3 class="font-semibold text-slate-800">Entradas vs Salidas (Totales)</h3>
             <div class="text-xs text-slate-500">${yearLabel}</div>
@@ -2799,7 +2799,7 @@ function renderInventarioGeneralUI(data, allData) {
         </div>
       </div>
 
-      <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200/70">
+      <div class="bg-white rounded-xl py-3 px-4 shadow-sm border border-slate-200/70">
         <div class="flex items-center justify-between mb-3">
           <h3 class="font-semibold text-slate-800">Detalle de Movimientos por Categoría</h3>
           <div class="text-xs text-slate-500">${fincas.length ? `Zonas/Fincas: ${fincas.join(', ')}` : ''}</div>
