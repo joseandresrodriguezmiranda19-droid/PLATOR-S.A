@@ -127,7 +127,9 @@
 </nav>
 
     <div class="p-4 border-t border-slate-800 bg-slate-950/30">
-      <p id="loadStatus" class="text-[10px] text-slate-400/80">Cargando datos…</p>
+      <div id="dropZone" style="display:none;"></div>
+      <input type="file" id="fileInput" class="hidden" accept=".xls,.xlsx" />
+      <p id="loadStatus" class="text-[10px] text-slate-400/80 mt-1">Cargando…</p>
     </div>
   </aside>
 
@@ -218,7 +220,7 @@
       <svg class="w-16 h-16 mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
       </svg>
-      <p id="placeholderText" class="text-center px-6">Cargando datos automáticamente…</p>
+      <p id="placeholderText" class="text-center px-6">Sube uno o varios archivos CSV para visualizar el reporte.</p>
     </div>
   </main>
 
@@ -624,6 +626,7 @@ function animateChartsIn() {
     const resetFilters = document.getElementById('resetFilters');
 
     window.onload = async () => {
+      // Modo solo-lectura (sin UI de carga). Los datos se cargan automáticamente desde /data/
       setupFilters();
       setupExport();
       await autoLoadData();
@@ -632,169 +635,12 @@ function animateChartsIn() {
       } else {
         renderNoDataState();
         const ph = document.getElementById('placeholderText');
-        if (ph) ph.innerText = "No se encontraron archivos de datos. Coloca el Excel/CSV en la carpeta /data del sitio (o configura las rutas dentro del HTML).";
-        const ls = document.getElementById('loadStatus');
-        if (ls) ls.textContent = "Sin datos.";
+        if (ph) ph.innerText = "No se encontraron archivos de datos. Coloca el Excel/CSV en la carpeta /data del sitio (ver configuración en el código).";
       }
     };
 
     function hasAnyDataLoaded() {
       return Object.keys(window.APP_DATA).some(k => Array.isArray(window.APP_DATA[k]) && window.APP_DATA[k].length);
-    }
-
-
-    // =========================
-    // Auto-carga (SIN subir archivos)
-    // =========================
-    // Esta versión es “solo lectura”: carga automáticamente desde una carpeta /data del sitio.
-    // Coloca allí un Excel (informe.xlsx / informe.xls) o los CSV individuales.
-    const AUTOLOAD_CONFIG = {
-      excelUrls: [
-        "data/informe.xlsx",
-        "data/informe.xls"
-      ],
-      csvUrls: [
-        "data/Inventario X Categoría.csv",
-        "data/FLUJO DE GANADO X CATEGORIA.csv",
-        "data/INVENTARIO ENTADA Y SALIDAS.csv",
-        "data/PROYECION DE PARTOS.csv",
-        "data/Nacimientos-2026.csv",
-        "data/Muertes-2026.csv",
-        "data/DESTETE TERNEROS.csv",
-        "data/Ventas-2026.csv"
-      ]
-    };
-
-    async function autoLoadData() {
-      const ls = document.getElementById('loadStatus');
-      const setStatus = (t) => { if (ls) ls.textContent = t; };
-
-      setStatus("Cargando datos…");
-      try {
-        // 1) Intentar Excel
-        for (const url of AUTOLOAD_CONFIG.excelUrls) {
-          const ok = await tryLoadExcelUrl(url);
-          if (ok) { setStatus("Datos cargados."); return; }
-        }
-
-        // 2) Intentar CSVs
-        let loadedAny = false;
-        for (const url of AUTOLOAD_CONFIG.csvUrls) {
-          const ok = await tryLoadCsvUrl(url);
-          loadedAny = loadedAny || ok;
-        }
-        if (loadedAny) { setStatus("Datos cargados."); return; }
-
-        setStatus("Sin datos.");
-      } catch (e) {
-        console.error("AutoLoad error:", e);
-        setStatus("Error cargando datos.");
-      }
-    }
-
-    async function tryLoadExcelUrl(url) {
-      try {
-        const res = await fetch(encodeURI(url), { cache: "no-store" });
-        if (!res.ok) return false;
-        if (typeof XLSX === 'undefined') return false;
-        const buf = await res.arrayBuffer();
-        handleExcelArrayBuffer(buf);
-        return hasAnyDataLoaded();
-      } catch (e) {
-        return false;
-      }
-    }
-
-    function handleExcelArrayBuffer(arrayBuffer) {
-      const modsLoaded = new Set();
-      const data = new Uint8Array(arrayBuffer);
-      const wb = XLSX.read(data, { type: "array" });
-      const sheetNames = wb.SheetNames || [];
-
-      sheetNames.forEach((sn) => {
-        const ws = wb.Sheets[sn];
-        if (!ws) return;
-        const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "", raw: false });
-        const rows = (aoa || []).map(r => (r || []).map(v => (v === null || v === undefined) ? "" : String(v)));
-
-        if (!rows || rows.length === 0) return;
-
-        const mod = detectModuleFromContent(sn, rows);
-        if (!mod) return;
-        modsLoaded.add(mod);
-
-        try {
-          if (mod === 'inventario_general') processInventarioGeneral(rows);
-          else if (mod === 'hato_reproductivo') processHatoReproductivo(rows);
-          else if (mod === 'flujo_ganado_categoria') processFlujoGanadoCategoria(rows);
-          else if (mod === 'inventario_movimiento') processInventarioMovimiento(rows);
-          else if (mod === 'nacimientos') processNacimientos(rows);
-          else if (mod === 'nacimientos_mes') processNacimientosMes(rows);
-          else if (mod === 'nacimientos_finca') processNacimientoFinca(rows);
-          else if (mod === 'muertes') processMuertes(rows);
-          else if (mod === 'muertes_mes') processMuertesMes(rows);
-          else if (mod === 'muertes_fincas') processMuertesFincas(rows);
-          else if (mod === 'lluvias') processLluvias(rows);
-          else if (mod === 'pesajes') processPesajes(rows);
-          else if (mod === 'hembras') processHembras(rows);
-          else if (mod === 'proyeccion_partos') processProyeccionPartos(rows);
-          else if (mod === 'destete') processDestete(rows);
-          else if (mod === 'ventas') processVentas(rows);
-          else if (mod === 'ventas_ganado') processVentasGanado(rows);
-        } catch (e) {
-          console.error("Error procesando hoja", sn, "=>", e);
-        }
-      });
-
-      if (modsLoaded.size > 0) {
-        modsLoaded.forEach(m => afterDataLoaded(m));
-      }
-    }
-
-    async function tryLoadCsvUrl(url) {
-      try {
-        const res = await fetch(encodeURI(url), { cache: "no-store" });
-        if (!res.ok) return false;
-        const text = await res.text();
-
-        const parsed = Papa.parse(text, {
-          delimiter: ";",
-          skipEmptyLines: "greedy",
-          quoteChar: '"'
-        });
-
-        const rows = parsed.data || [];
-        if (!rows || rows.length === 0) return false;
-
-        const fileName = (url.split('/').pop() || url).toString();
-        const mod = detectModuleFromContent(fileName, rows);
-        if (!mod) return false;
-
-        try {
-          if (mod === 'inventario_general') processInventarioGeneral(rows);
-          else if (mod === 'hato_reproductivo') processHatoReproductivo(rows);
-          else if (mod === 'flujo_ganado_categoria') processFlujoGanadoCategoria(rows);
-          else if (mod === 'inventario_movimiento') processInventarioMovimiento(rows);
-          else if (mod === 'nacimientos') processNacimientos(rows);
-          else if (mod === 'nacimientos_mes') processNacimientosMes(rows);
-          else if (mod === 'nacimientos_finca') processNacimientoFinca(rows);
-          else if (mod === 'muertes') processMuertes(rows);
-          else if (mod === 'muertes_mes') processMuertesMes(rows);
-          else if (mod === 'muertes_fincas') processMuertesFincas(rows);
-          else if (mod === 'proyeccion_partos') processProyeccionPartos(rows);
-          else if (mod === 'destete') processDestete(rows);
-          else if (mod === 'ventas') processVentas(rows);
-          else if (mod === 'ventas_ganado') processVentasGanado(rows);
-        } catch (e) {
-          console.error("Error procesando CSV", fileName, "=>", e);
-          return false;
-        }
-
-        afterDataLoaded(mod);
-        return true;
-      } catch (e) {
-        return false;
-      }
     }
 
     function setHeaderForModule(mod) {
@@ -858,12 +704,13 @@ function switchModule(mod) {
         // Asegura que NO queden tarjetas/gráficos viejos
         resetView();
         renderNoDataState();
-        document.getElementById('placeholderText').innerText = `Sube el archivo CSV de “${(MODULES[mod]?.title || mod)}” para comenzar.`;
+        document.getElementById('placeholderText').innerText = `No hay datos para “${(MODULES[mod]?.title || mod)}”. Coloca el archivo en /data o cambia AUTOLOAD_CONFIG.`;
       }
       animateSection();
 }
 
     function setupDragAndDrop() {
+      if (!dropZone || !fileInput) return;
       dropZone.onclick = () => fileInput.click();
       fileInput.onchange = (e) => handleMultipleFiles(e.target.files);
       dropZone.ondragover = (e) => { e.preventDefault(); dropZone.classList.add('over'); };
@@ -1005,6 +852,167 @@ function detectModuleFromContent(fileName, rows) {
         };
         reader.readAsArrayBuffer(file);
       });
+    }
+
+    
+    // =========================
+    // Auto-carga (SIN subida)
+    // =========================
+    // Esta versión NO muestra "Actualizar Datos" y NO embebe datos dentro del HTML.
+    // Para que cargue, coloca los archivos en la carpeta /data del sitio (Cloudflare Pages / GitHub Pages / servidor).
+    // Nota: si abres el HTML como file:// el navegador puede bloquear fetch() por seguridad.
+    const AUTOLOAD_CONFIG = {
+      // 1) Preferencia: un solo Excel con todas las hojas
+      excelUrls: [
+        "data/informe.xlsx",
+        "data/informe.xls"
+      ],
+      // 2) Respaldo: varios CSV (si no hay Excel)
+      csvUrls: [
+        "data/Inventario X Categoría.csv",
+        "data/FLUJO DE GANADO X CATEGORIA.csv",
+        "data/INVENTARIO ENTADA Y SALIDAS.csv",
+        "data/PROYECION DE PARTOS.csv",
+        "data/Nacimientos-2026.csv",
+        "data/Muertes-2026.csv",
+        "data/DESTETE TERNEROS.csv",
+        "data/Ventas-2026.csv"
+      ]
+    };
+
+    async function autoLoadData() {
+      const banner = document.getElementById('loadStatus');
+      const setStatus = (msg) => { if (banner) banner.textContent = msg; };
+
+      setStatus("Cargando datos…");
+      try {
+        // 1) Intentar Excel
+        for (const url of AUTOLOAD_CONFIG.excelUrls) {
+          const ok = await tryLoadExcelUrl(url);
+          if (ok) { setStatus("Datos cargados desde Excel."); return; }
+        }
+
+        // 2) Intentar CSVs
+        let loadedAny = false;
+        for (const url of AUTOLOAD_CONFIG.csvUrls) {
+          const ok = await tryLoadCsvUrl(url);
+          loadedAny = loadedAny || ok;
+        }
+        if (loadedAny) { setStatus("Datos cargados desde CSV."); return; }
+
+        setStatus("Sin datos.");
+      } catch (e) {
+        console.error("AutoLoad error:", e);
+        setStatus("Error cargando datos.");
+      }
+    }
+
+    async function tryLoadExcelUrl(url) {
+      try {
+        const res = await fetch(encodeURI(url), { cache: "no-store" });
+        if (!res.ok) return false;
+        if (typeof XLSX === 'undefined') {
+          console.error('XLSX no está disponible. Revisa conexión a internet o bloqueo de CDN.');
+          return false;
+        }
+        const buf = await res.arrayBuffer();
+        await handleExcelArrayBuffer(buf, url.split('/').pop() || 'informe.xlsx');
+        return hasAnyDataLoaded();
+      } catch (e) {
+        return false;
+      }
+    }
+
+    async function handleExcelArrayBuffer(arrayBuffer, fileName) {
+      const modsLoaded = new Set();
+      const data = new Uint8Array(arrayBuffer);
+      const wb = XLSX.read(data, { type: "array" });
+      const sheetNames = wb.SheetNames || [];
+      sheetNames.forEach((sn) => {
+        const ws = wb.Sheets[sn];
+        if (!ws) return;
+        const aoa = XLSX.utils.sheet_to_json(ws, { header: 1, defval: "", raw: false });
+        const rows = normalizeSheetRows(aoa);
+        if (!rows || rows.length === 0) return;
+
+        const mod = detectModuleFromContent(sn, rows);
+        if (!mod) return;
+        modsLoaded.add(mod);
+
+        try {
+          if (mod === 'inventario_general') processInventarioGeneral(rows);
+          else if (mod === 'hato_reproductivo') processHatoReproductivo(rows);
+          else if (mod === 'flujo_ganado_categoria') processFlujoGanadoCategoria(rows);
+          else if (mod === 'inventario_movimiento') processInventarioMovimiento(rows);
+          else if (mod === 'nacimientos') processNacimientos(rows);
+          else if (mod === 'nacimientos_mes') processNacimientosMes(rows);
+          else if (mod === 'nacimientos_finca') processNacimientoFinca(rows);
+          else if (mod === 'muertes') processMuertes(rows);
+          else if (mod === 'muertes_mes') processMuertesMes(rows);
+          else if (mod === 'muertes_fincas') processMuertesFincas(rows);
+          else if (mod === 'lluvias') processLluvias(rows);
+          else if (mod === 'pesajes') processPesajes(rows);
+          else if (mod === 'hembras') processHembras(rows);
+          else if (mod === 'proyeccion_partos') processProyeccionPartos(rows);
+          else if (mod === 'destete') processDestete(rows);
+          else if (mod === 'ventas') processVentas(rows);
+          else if (mod === 'ventas_ganado') processVentasGanado(rows);
+        } catch (e) {
+          console.error("Error procesando hoja", sn, "=>", e);
+        }
+      });
+
+      if (modsLoaded.size > 0) {
+        modsLoaded.forEach(m => afterDataLoaded(m));
+      } else {
+        console.warn("Excel cargado pero sin hojas compatibles:", fileName);
+      }
+    }
+
+    async function tryLoadCsvUrl(url) {
+      try {
+        const res = await fetch(encodeURI(url), { cache: "no-store" });
+        if (!res.ok) return false;
+        const text = await res.text();
+
+        const parsed = Papa.parse(text, {
+          delimiter: ";",
+          skipEmptyLines: "greedy",
+          quoteChar: '"'
+        });
+
+        const rows = parsed.data || [];
+        if (!rows || rows.length === 0) return false;
+
+        const fileName = (url.split('/').pop() || url).toString();
+        const mod = detectModuleFromContent(fileName, rows);
+        if (!mod) return false;
+
+        try {
+          if (mod === 'inventario_general') processInventarioGeneral(rows);
+          else if (mod === 'hato_reproductivo') processHatoReproductivo(rows);
+          else if (mod === 'flujo_ganado_categoria') processFlujoGanadoCategoria(rows);
+          else if (mod === 'inventario_movimiento') processInventarioMovimiento(rows);
+          else if (mod === 'nacimientos') processNacimientos(rows);
+          else if (mod === 'nacimientos_mes') processNacimientosMes(rows);
+          else if (mod === 'nacimientos_finca') processNacimientoFinca(rows);
+          else if (mod === 'muertes') processMuertes(rows);
+          else if (mod === 'muertes_mes') processMuertesMes(rows);
+          else if (mod === 'muertes_fincas') processMuertesFincas(rows);
+          else if (mod === 'proyeccion_partos') processProyeccionPartos(rows);
+          else if (mod === 'destete') processDestete(rows);
+          else if (mod === 'ventas') processVentas(rows);
+          else if (mod === 'ventas_ganado') processVentasGanado(rows);
+        } catch (e) {
+          console.error("Error procesando CSV", fileName, "=>", e);
+          return false;
+        }
+
+        afterDataLoaded(mod);
+        return true;
+      } catch (e) {
+        return false;
+      }
     }
 
     function handleMultipleFiles(files) {
@@ -2632,17 +2640,10 @@ function renderInventarioGeneralUI(data, allData) {
     { label: 'Existencia Inicial', value: totals.existencia_inicial, icon: '🐄' },
     { label: 'Existencia Final', value: totals.existencia_final, icon: '📌' },
     { label: 'Variación', value: variacion, icon: variacion >= 0 ? '📈' : '📉' },
-
-    { label: 'Entradas (Transferencia de clase)', value: totals.traslado_entradas, icon: '🔁' },
-
     { label: 'Nacimientos', value: totals.nacimientos, icon: '🍼' },
-    { label: 'Compras', value: totals.compras, icon: '🧾' },
-
-    { label: 'Salidas (Transferencia de clase)', value: totals.traslado_salidas, icon: '🔁' },
-
     { label: 'Muertes', value: totals.muertes, icon: '⚠️' },
+    { label: 'Compras', value: totals.compras, icon: '🧾' },
     { label: 'Ventas', value: totals.ventas, icon: '💰' },
-
     { label: 'Crecimiento Neto (%)', value: (totals.existencia_inicial ? (variacion / totals.existencia_inicial) * 100 : 0), icon: (variacion >= 0 ? '📊' : '📉'), fmt: 'pct', },
   ];
 
@@ -5164,6 +5165,277 @@ function detectModuleFromFilename(fileName) {
   const base = normalizeKey(fileName);
   return FILE_NAME_TO_MODULE[base] || null;
 }
+</script>
+
+  
+<script>
+(() => {
+const API_BASE = "https://plator-api.joseandresrodriguezmiranda19.workers.dev";
+
+const IS_SNAPSHOT = (location.protocol === "file:");
+  if (IS_SNAPSHOT) {
+    // opcional: ocultar el panel de “Actualizar Datos” para que no se edite localmente
+    const dz = document.getElementById("dropZone");
+    if (dz) dz.style.display = "none";
+    return; // NO cargar KV, NO mostrar Editar
+  }
+
+/** ====== Helpers ====== **/
+function apiBase() { return API_BASE.replace(/\/+$/, ""); }
+
+function normKey(s="") {
+  return (s||"")
+    .toString()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase()
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function slugify(s="") {
+  return (s||"")
+    .toString()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "")
+    .slice(0, 80) || "sheet";
+}
+
+function canonicalFilename(sheetName) {
+  const k = normKey(sheetName);
+  if (k.includes("INVENTARIO") && k.includes("CATEGOR")) return "Inventario X Categoria.csv";
+  if (k.includes("FLUJO") && k.includes("CATEGOR")) return "Flujo de Ganado x Categoria.csv";
+  if ((k.includes("ENTRADA") && k.includes("SALIDA")) || k.includes("MOVIMIENTO")) return "Inventario Entradas y Salidas.csv";
+  if (k.includes("NACIM")) return "Nacimientos 2026.csv";
+  if (k.includes("MUERT")) return "Muertes 2026.csv";
+  if (k.includes("DESTETE")) return "Destete de Terneros.csv";
+  if ((k.includes("PROYEC") || k.includes("PROYECION")) && k.includes("PART")) return "Proyeccion de Partos.csv";
+  if (k.includes("VENTAS")) return "Ventas 2026.csv";
+  return `${sheetName}.csv`;
+}
+
+async function kvGet(key) {
+  const r = await fetch(`${apiBase()}/api/${key}?ts=${Date.now()}`, { cache: "no-store" });
+  if (!r.ok) throw new Error(`GET ${key} -> ${r.status}`);
+  return await r.text();
+}
+
+async function kvUpload(items, token) {
+  const r = await fetch(`${apiBase()}/api/upload`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Upload-Token": token
+    },
+    body: JSON.stringify({ items })
+  });
+  if (!r.ok) throw new Error(`UPLOAD -> ${r.status}`);
+  return await r.json();
+}
+
+async function kvWipe(prefix, token) {
+  const r = await fetch(`${apiBase()}/api/wipe`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Upload-Token": token
+    },
+    body: JSON.stringify({ prefix })
+  });
+  if (!r.ok) throw new Error(`WIPE -> ${r.status}`);
+  return await r.json();
+}
+
+/** ====== Cargar desde KV ====== **/
+async function autoLoadInformeFromKV() {
+  const manifestText = await kvGet("informe/sheets.json");
+  const list = JSON.parse(manifestText);
+
+  const files = [];
+  for (const item of list) {
+    const csvText = await kvGet(`informe/csv/${item.slug}.csv`);
+    files.push(new File([csvText], item.fileName || (item.slug + ".csv"), { type: "text/csv" }));
+  }
+
+  if (typeof handleMultipleFiles !== "function") {
+    throw new Error("No existe handleMultipleFiles() en este dashboard.");
+  }
+  if (files.length) handleMultipleFiles(files);
+
+  const lastUpdate = document.getElementById("lastUpdate");
+  if (lastUpdate) lastUpdate.innerText = `Cargado desde la nube (KV) — ${new Date().toLocaleString()}`;
+}
+
+/** ====== Publicar Excel a KV ====== **/
+async function publishInformeExcelToKV(file, token) {
+  if (!token) throw new Error("Falta la clave (UPLOAD_TOKEN).");
+  if (typeof XLSX === "undefined") throw new Error("No existe XLSX (librería de Excel).");
+
+  const buf = await file.arrayBuffer();
+  const wb = XLSX.read(buf, { type: "array" });
+
+  const items = [];
+  const manifest = [];
+
+  for (const sheetName of wb.SheetNames) {
+    const ws = wb.Sheets[sheetName];
+    if (!ws) continue;
+
+    let csvText = XLSX.utils.sheet_to_csv(ws, { FS: ";", blankrows: false });
+    csvText = (csvText || "").trim();
+    if (!csvText) continue;
+
+    const slug = slugify(sheetName);
+    const fileName = canonicalFilename(sheetName);
+
+    manifest.push({ sheet: sheetName, slug, fileName });
+    items.push({ key: `informe/csv/${slug}.csv`, value: csvText + "\n" });
+  }
+
+  items.push({ key: "informe/sheets.json", value: JSON.stringify(manifest) });
+  return await kvUpload(items, token);
+}
+
+/** ====== Estado en blanco (cuando se borra) ====== **/
+function setBlankState(msg = "No hay datos publicados. Usa Editar → Publicar Excel.") {
+  try { window.APP_DATA = {}; } catch(e) {}
+
+  try { if (typeof resetView === "function") resetView(); } catch(e) {}
+
+  try {
+    const dashboardContent = document.getElementById("dashboardContent");
+    const noDataState = document.getElementById("noDataState");
+    const placeholderText = document.getElementById("placeholderText");
+    const lastUpdate = document.getElementById("lastUpdate");
+    const saveBtn = document.getElementById("saveBtn");
+
+    if (dashboardContent) dashboardContent.classList.add("opacity-50", "pointer-events-none");
+    if (noDataState) noDataState.classList.remove("hidden");
+    if (placeholderText) placeholderText.innerText = msg;
+    if (lastUpdate) lastUpdate.innerText = "Sin datos (KV vacío)";
+    if (saveBtn) saveBtn.classList.add("hidden");
+  } catch(e) {}
+}
+
+/** ====== UI: Botón Editar con panel ====== **/
+function injectAdminUI() {
+  const dropZone = document.getElementById("dropZone");
+  if (!dropZone) return;
+
+  const host = dropZone.parentElement;
+
+  const panel = document.createElement("div");
+  panel.className = "mt-3 flex flex-col gap-2";
+
+  panel.innerHTML = `
+    <div class="flex flex-wrap items-center gap-2">
+      <button id="btnEditKV"
+        class="px-3 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold">
+        ✏️ Editar
+      </button>
+      <span id="adminHint" class="text-[10px] text-slate-400/80"></span>
+    </div>
+
+    <div id="adminBoxKV" class="hidden mt-2 p-3 rounded-xl border border-white/10 bg-slate-900/30">
+      <div class="flex flex-wrap items-center gap-2">
+        <input id="kvExcelInput" type="file" accept=".xls,.xlsx" class="hidden" />
+        <input id="kvToken" type="password" placeholder="Clave (UPLOAD_TOKEN)"
+          class="px-3 py-2 rounded-xl bg-slate-900/40 border border-white/10 text-slate-100 text-xs min-w-[240px]" />
+
+        <button id="btnPickExcelKV"
+          class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold">
+          Publicar Excel
+        </button>
+
+        <button id="btnWipeKV"
+          class="px-3 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold">
+          Eliminar datos
+        </button>
+
+        <button id="btnCloseKV"
+          class="px-3 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold">
+          Cerrar
+        </button>
+
+        <span id="kvStatus" class="text-[10px] text-slate-300/80"></span>
+      </div>
+
+      <div class="text-[10px] text-slate-400/80 leading-relaxed mt-2">
+        Publicar: convierte el Excel y actualiza a todos. Eliminar: deja el informe en blanco para todos.
+      </div>
+    </div>
+  `;
+
+  host.appendChild(panel);
+
+  const btnEdit = panel.querySelector("#btnEditKV");
+  const box = panel.querySelector("#adminBoxKV");
+  const btnClose = panel.querySelector("#btnCloseKV");
+
+  const excelInput = panel.querySelector("#kvExcelInput");
+  const tokenInput = panel.querySelector("#kvToken");
+
+  const btnPickExcel = panel.querySelector("#btnPickExcelKV");
+  const btnWipe = panel.querySelector("#btnWipeKV");
+  const status = panel.querySelector("#kvStatus");
+  const hint = panel.querySelector("#adminHint");
+
+  btnEdit.onclick = () => box.classList.toggle("hidden");
+  btnClose.onclick = () => box.classList.add("hidden");
+  btnPickExcel.onclick = () => excelInput.click();
+
+  excelInput.onchange = async () => {
+    const f = excelInput.files?.[0];
+    if (!f) return;
+
+    const token = tokenInput.value.trim();
+    status.textContent = "Publicando...";
+    try {
+      await publishInformeExcelToKV(f, token);
+      status.textContent = "✅ Publicado. Cargando...";
+      await autoLoadInformeFromKV();
+      status.textContent = "✅ Listo.";
+      hint.textContent = "Actualizado para todos ✅";
+    } catch (e) {
+      console.error(e);
+      status.textContent = "❌ Error (clave o Worker/KV).";
+    } finally {
+      excelInput.value = "";
+    }
+  };
+
+  btnWipe.onclick = async () => {
+    const token = tokenInput.value.trim();
+    if (!token) { status.textContent = "❌ Escribe la clave."; return; }
+
+    const ok = confirm("¿Seguro que deseas ELIMINAR los datos del Informe para todos? Esto dejará el dashboard en blanco.");
+    if (!ok) return;
+
+    status.textContent = "Eliminando...";
+    try {
+      await kvWipe("informe/", token);
+      status.textContent = "✅ Datos eliminados.";
+      hint.textContent = "KV vacío (sin datos)";
+      setBlankState("Datos eliminados. Usa Editar → Publicar Excel para volver a cargar.");
+    } catch (e) {
+      console.error(e);
+      status.textContent = "❌ Error al eliminar (clave o Worker).";
+    }
+  };
+}
+
+/** ====== INICIO (sin addEventListener) ====== **/
+(async function INIT_KV_LIVE() {
+  try {
+    await autoLoadInformeFromKV();
+  } catch (e) {
+    console.warn("Aún no hay datos en KV:", e);
+    setBlankState();
+  }
+  injectAdminUI();
+})();
+})();
 </script>
 
 </body>
