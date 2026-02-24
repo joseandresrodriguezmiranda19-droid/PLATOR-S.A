@@ -5010,17 +5010,17 @@ function detectModuleFromFilename(fileName) {
 const API_BASE = "https://plator-api.joseandresrodriguezmiranda19.workers.dev";
 
 /** ====== Helpers ====== **/
-function apiBase() {
-  return API_BASE.replace(/\/+$/,''); // quita '/' al final si existiera
-}
+function apiBase() { return API_BASE.replace(/\/+$/, ""); }
+
 function normKey(s="") {
   return (s||"")
     .toString()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")  // sin acentos
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
     .toUpperCase()
     .replace(/\s+/g, " ")
     .trim();
 }
+
 function slugify(s="") {
   return (s||"")
     .toString()
@@ -5030,6 +5030,7 @@ function slugify(s="") {
     .replace(/^_+|_+$/g, "")
     .slice(0, 80) || "sheet";
 }
+
 function canonicalFilename(sheetName) {
   const k = normKey(sheetName);
   if (k.includes("INVENTARIO") && k.includes("CATEGOR")) return "Inventario X Categoria.csv";
@@ -5044,8 +5045,7 @@ function canonicalFilename(sheetName) {
 }
 
 async function kvGet(key) {
-  const url = `${apiBase()}/api/${key}?ts=${Date.now()}`;
-  const r = await fetch(url, { cache: "no-store" });
+  const r = await fetch(`${apiBase()}/api/${key}?ts=${Date.now()}`, { cache: "no-store" });
   if (!r.ok) throw new Error(`GET ${key} -> ${r.status}`);
   return await r.text();
 }
@@ -5063,7 +5063,20 @@ async function kvUpload(items, token) {
   return await r.json();
 }
 
-/** ====== Load from KV ====== **/
+async function kvWipe(prefix, token) {
+  const r = await fetch(`${apiBase()}/api/wipe`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-Upload-Token": token
+    },
+    body: JSON.stringify({ prefix })
+  });
+  if (!r.ok) throw new Error(`WIPE -> ${r.status}`);
+  return await r.json();
+}
+
+/** ====== Cargar desde KV ====== **/
 async function autoLoadInformeFromKV() {
   const manifestText = await kvGet("informe/sheets.json");
   const list = JSON.parse(manifestText);
@@ -5083,9 +5096,10 @@ async function autoLoadInformeFromKV() {
   if (lastUpdate) lastUpdate.innerText = `Cargado desde la nube (KV) — ${new Date().toLocaleString()}`;
 }
 
-/** ====== Publish Excel to KV ====== **/
+/** ====== Publicar Excel a KV ====== **/
 async function publishInformeExcelToKV(file, token) {
   if (!token) throw new Error("Falta la clave (UPLOAD_TOKEN).");
+  if (typeof XLSX === "undefined") throw new Error("No existe XLSX (librería de Excel).");
 
   const buf = await file.arrayBuffer();
   const wb = XLSX.read(buf, { type: "array" });
@@ -5097,7 +5111,6 @@ async function publishInformeExcelToKV(file, token) {
     const ws = wb.Sheets[sheetName];
     if (!ws) continue;
 
-    // CSV con separador ; (tu dashboard parsea con ;)
     let csvText = XLSX.utils.sheet_to_csv(ws, { FS: ";", blankrows: false });
     csvText = (csvText || "").trim();
     if (!csvText) continue;
@@ -5110,69 +5123,147 @@ async function publishInformeExcelToKV(file, token) {
   }
 
   items.push({ key: "informe/sheets.json", value: JSON.stringify(manifest) });
-
   return await kvUpload(items, token);
 }
 
-/** ====== UI button (Publish) ====== **/
-function injectPublishUI() {
+/** ====== Estado en blanco (cuando se borra) ====== **/
+function setBlankState(msg = "No hay datos publicados. Usa Editar → Publicar Excel.") {
+  try { window.APP_DATA = {}; } catch(e) {}
+
+  try { if (typeof resetView === "function") resetView(); } catch(e) {}
+
+  try {
+    const dashboardContent = document.getElementById("dashboardContent");
+    const noDataState = document.getElementById("noDataState");
+    const placeholderText = document.getElementById("placeholderText");
+    const lastUpdate = document.getElementById("lastUpdate");
+    const saveBtn = document.getElementById("saveBtn");
+
+    if (dashboardContent) dashboardContent.classList.add("opacity-50", "pointer-events-none");
+    if (noDataState) noDataState.classList.remove("hidden");
+    if (placeholderText) placeholderText.innerText = msg;
+    if (lastUpdate) lastUpdate.innerText = "Sin datos (KV vacío)";
+    if (saveBtn) saveBtn.classList.add("hidden");
+  } catch(e) {}
+}
+
+/** ====== UI: Botón Editar con panel ====== **/
+function injectAdminUI() {
   const dropZone = document.getElementById("dropZone");
   if (!dropZone) return;
 
-  const box = document.createElement("div");
-  box.className = "mt-3 flex flex-col gap-2";
+  const host = dropZone.parentElement;
 
-  box.innerHTML = `
+  const panel = document.createElement("div");
+  panel.className = "mt-3 flex flex-col gap-2";
+
+  panel.innerHTML = `
     <div class="flex flex-wrap items-center gap-2">
-      <input id="kvExcelInput" type="file" accept=".xls,.xlsx" class="hidden" />
-      <input id="kvToken" type="password" placeholder="Clave para publicar (UPLOAD_TOKEN)"
-        class="px-3 py-2 rounded-xl bg-slate-900/40 border border-white/10 text-slate-100 text-xs min-w-[240px]" />
-      <button id="btnPublishKV"
-        class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold">
-        Publicar Excel (en línea)
+      <button id="btnEditKV"
+        class="px-3 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold">
+        ✏️ Editar
       </button>
-      <span id="kvStatus" class="text-[10px] text-slate-300/80"></span>
+      <span id="adminHint" class="text-[10px] text-slate-400/80"></span>
     </div>
-    <div class="text-[10px] text-slate-400/80 leading-relaxed">
-      Esto guarda el Excel convertido en la nube (Cloudflare KV). Todos verán lo actualizado al abrir el link.
+
+    <div id="adminBoxKV" class="hidden mt-2 p-3 rounded-xl border border-white/10 bg-slate-900/30">
+      <div class="flex flex-wrap items-center gap-2">
+        <input id="kvExcelInput" type="file" accept=".xls,.xlsx" class="hidden" />
+        <input id="kvToken" type="password" placeholder="Clave (UPLOAD_TOKEN)"
+          class="px-3 py-2 rounded-xl bg-slate-900/40 border border-white/10 text-slate-100 text-xs min-w-[240px]" />
+
+        <button id="btnPickExcelKV"
+          class="px-3 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold">
+          Publicar Excel
+        </button>
+
+        <button id="btnWipeKV"
+          class="px-3 py-2 rounded-xl bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold">
+          Eliminar datos
+        </button>
+
+        <button id="btnCloseKV"
+          class="px-3 py-2 rounded-xl bg-slate-700 hover:bg-slate-600 text-white text-xs font-bold">
+          Cerrar
+        </button>
+
+        <span id="kvStatus" class="text-[10px] text-slate-300/80"></span>
+      </div>
+
+      <div class="text-[10px] text-slate-400/80 leading-relaxed mt-2">
+        Publicar: convierte el Excel y actualiza a todos. Eliminar: deja el informe en blanco para todos.
+      </div>
     </div>
   `;
 
-  dropZone.parentElement.appendChild(box);
+  host.appendChild(panel);
 
-  const excelInput = box.querySelector("#kvExcelInput");
-  const tokenInput = box.querySelector("#kvToken");
-  const btn = box.querySelector("#btnPublishKV");
-  const status = box.querySelector("#kvStatus");
+  const btnEdit = panel.querySelector("#btnEditKV");
+  const box = panel.querySelector("#adminBoxKV");
+  const btnClose = panel.querySelector("#btnCloseKV");
 
-  btn.addEventListener("click", () => excelInput.click());
+  const excelInput = panel.querySelector("#kvExcelInput");
+  const tokenInput = panel.querySelector("#kvToken");
 
-  excelInput.addEventListener("change", async () => {
+  const btnPickExcel = panel.querySelector("#btnPickExcelKV");
+  const btnWipe = panel.querySelector("#btnWipeKV");
+  const status = panel.querySelector("#kvStatus");
+  const hint = panel.querySelector("#adminHint");
+
+  btnEdit.onclick = () => box.classList.toggle("hidden");
+  btnClose.onclick = () => box.classList.add("hidden");
+  btnPickExcel.onclick = () => excelInput.click();
+
+  excelInput.onchange = async () => {
     const f = excelInput.files?.[0];
     if (!f) return;
 
+    const token = tokenInput.value.trim();
     status.textContent = "Publicando...";
     try {
-      await publishInformeExcelToKV(f, tokenInput.value.trim());
+      await publishInformeExcelToKV(f, token);
       status.textContent = "✅ Publicado. Cargando...";
       await autoLoadInformeFromKV();
-      status.textContent = "✅ Listo (actualizado para todos).";
+      status.textContent = "✅ Listo.";
+      hint.textContent = "Actualizado para todos ✅";
     } catch (e) {
       console.error(e);
       status.textContent = "❌ Error (clave o Worker/KV).";
     } finally {
       excelInput.value = "";
     }
-  });
+  };
+
+  btnWipe.onclick = async () => {
+    const token = tokenInput.value.trim();
+    if (!token) { status.textContent = "❌ Escribe la clave."; return; }
+
+    const ok = confirm("¿Seguro que deseas ELIMINAR los datos del Informe para todos? Esto dejará el dashboard en blanco.");
+    if (!ok) return;
+
+    status.textContent = "Eliminando...";
+    try {
+      await kvWipe("informe/", token);
+      status.textContent = "✅ Datos eliminados.";
+      hint.textContent = "KV vacío (sin datos)";
+      setBlankState("Datos eliminados. Usa Editar → Publicar Excel para volver a cargar.");
+    } catch (e) {
+      console.error(e);
+      status.textContent = "❌ Error al eliminar (clave o Worker).";
+    }
+  };
 }
 
-/** ====== Start ====== **/
-window.addEventListener("load", async () => {
-  // 1) Intenta cargar desde KV (si aún no has publicado, dará 404 y es normal)
-  try { await autoLoadInformeFromKV(); } catch (e) { console.warn("Aún no hay datos en KV:", e); }
-  // 2) Agrega el botón de publicar
-  injectPublishUI();
-});
+/** ====== INICIO (sin addEventListener) ====== **/
+(async function INIT_KV_LIVE() {
+  try {
+    await autoLoadInformeFromKV();
+  } catch (e) {
+    console.warn("Aún no hay datos en KV:", e);
+    setBlankState();
+  }
+  injectAdminUI();
+})();
 </script>
   
 </body>
