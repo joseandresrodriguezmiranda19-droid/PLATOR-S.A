@@ -5006,8 +5006,16 @@ function detectModuleFromFilename(fileName) {
 </script>
 
 <script>
-/** ====== CONFIG ====== **/
+(() => {
 const API_BASE = "https://plator-api.joseandresrodriguezmiranda19.workers.dev";
+
+const IS_SNAPSHOT = (location.protocol === "file:");
+  if (IS_SNAPSHOT) {
+    // opcional: ocultar el panel de “Actualizar Datos” para que no se edite localmente
+    const dz = document.getElementById("dropZone");
+    if (dz) dz.style.display = "none";
+    return; // NO cargar KV, NO mostrar Editar
+  }
 
 /** ====== Helpers ====== **/
 function apiBase() { return API_BASE.replace(/\/+$/, ""); }
@@ -5263,6 +5271,7 @@ function injectAdminUI() {
     setBlankState();
   }
   injectAdminUI();
+})();
 })();
 </script>
   
