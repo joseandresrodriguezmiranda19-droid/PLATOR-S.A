@@ -2079,14 +2079,14 @@ function processMuertes(rows) {
           yearStartFilter.value = years[0];
           yearEndFilter.value = years[years.length - 1];
 
-          // Default en Nacimientos/Muertes: 2026 a 2026 (si existe). Si no existe, usa el último año disponible.
+          // Default en Nacimientos y Muertes: 2026 a 2026 (si existe). Si no existe, usa el último año disponible.
           if (window.CURRENT_MODULE === 'nacimientos' || window.CURRENT_MODULE === 'muertes') {
             const target = 2026;
             const ySel = years.includes(target) ? target : years[years.length - 1];
             yearStartFilter.value = String(ySel);
             yearEndFilter.value = String(ySel);
           }
-        } else {
+} else {
           yearStartFilter.innerHTML = `<option value="0">0</option>`;
           yearEndFilter.innerHTML = `<option value="9999">9999</option>`;
         }
@@ -3940,24 +3940,22 @@ function renderMuertesUI(data, allData) {
   const delta = (latestYear && prevYear) ? (latestTotal - prevTotal) : 0;
   const pctDelta = (latestYear && prevYear && prevTotal !== 0) ? (delta / prevTotal) : 0;
 
-  // Nueva tarjeta: % de muertes vs hato (masa ganadera) del año seleccionado
-  const masaLatest = latestYear ? (totalsByYear[latestYear].masa_ganadera || 0) : 0;
-  const tasaMuertesPct = masaLatest > 0 ? (latestTotal / masaLatest) * 100 : 0;
+  // Tarjetas (siempre 5, como Nacimientos)
+  const totalMuertes = latestYear ? (totalsByYear[latestYear].muertes || 0) : 0;
+  const totalMachos = latestYear ? (totalsByYear[latestYear].crias_machos || 0) : 0;
+  const totalHembras = latestYear ? (totalsByYear[latestYear].crias_hembras || 0) : 0;
+  const totalMasa = latestYear ? (totalsByYear[latestYear].masa_ganadera || 0) : 0;
 
-const kpis = (latestYear && prevYear) ? ([
-    { label: `Total Muertes ${prevYear}`, value: prevTotal, icon: '📦' },
-    { label: `Total Muertes ${latestYear}`, value: latestTotal, icon: '⚠️' },
-    { label: `Muertes / Hato (${latestYear})`, value: tasaMuertesPct, icon: '📊', isPct: true },
+  // Muertes / Hato (%): muertes sobre masa ganadera
+  const tasaMuertes = totalMasa > 0 ? (totalMuertes / totalMasa) * 100 : 0;
 
-    { label: 'Variación', value: delta, icon: delta <= 0 ? '📉' : '📈' },
-    { label: '% Variación', value: pctDelta, icon: '🧮', isPct: true },
-  ]) : ([
-    { label: `Total Muertes ${latestYear || ''}`.trim(), value: latestTotal, icon: '⚠️' },
-    { label: 'Crías Machos', value: latestYear ? (totalsByYear[latestYear].crias_machos || 0) : 0, icon: '♂️' },
-    { label: 'Crías Hembras', value: latestYear ? (totalsByYear[latestYear].crias_hembras || 0) : 0, icon: '♀️' },
-    { label: 'Masa Ganadera', value: latestYear ? (totalsByYear[latestYear].masa_ganadera || 0) : 0, icon: '🐄' },
-    { label: `Muertes / Hato (${latestYear || ''})`.trim(), value: tasaMuertesPct, icon: '📊', isPct: true },
-  ]);
+  const kpis = [
+    { label: `Total Muertes ${latestYear || ''}`.trim(), value: totalMuertes, icon: '⚠️' },
+    { label: 'Crías Machos', value: totalMachos, icon: '♂️' },
+    { label: 'Crías Hembras', value: totalHembras, icon: '♀️' },
+    { label: 'Masa Ganadera', value: totalMasa, icon: '🐄' },
+    { label: `Muertes / Hato (${latestYear || ''})`.trim(), value: tasaMuertes, icon: '📊', isPct: true },
+  ];
 
   const kpiHtml = kpis.map(k => `
     <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200/70">
@@ -4065,7 +4063,7 @@ const kpis = (latestYear && prevYear) ? ([
 
   content.innerHTML = `
     <div class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
         ${kpiHtml}
       </div>
 
