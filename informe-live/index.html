@@ -2079,14 +2079,14 @@ function processMuertes(rows) {
           yearStartFilter.value = years[0];
           yearEndFilter.value = years[years.length - 1];
 
-          // Default en Nacimientos: 2026 a 2026 (si existe). Si no existe, usa el último año disponible.
-          if (window.CURRENT_MODULE === 'nacimientos') {
+          // Default en Nacimientos y Muertes: 2026 a 2026 (si existe). Si no existe, usa el último año disponible.
+          if (window.CURRENT_MODULE === 'nacimientos' || window.CURRENT_MODULE === 'muertes') {
             const target = 2026;
             const ySel = years.includes(target) ? target : years[years.length - 1];
             yearStartFilter.value = String(ySel);
             yearEndFilter.value = String(ySel);
           }
-        } else {
+} else {
           yearStartFilter.innerHTML = `<option value="0">0</option>`;
           yearEndFilter.innerHTML = `<option value="9999">9999</option>`;
         }
@@ -3460,34 +3460,41 @@ function renderNacimientosUI(data, allData) {
       totalsByYear[y].hato_ganadero += slot.hato_ganadero;
     }
   }
+  // Años seleccionados en filtros
+  const yStartSel = (typeof yearStartFilter !== 'undefined' && yearStartFilter && yearStartFilter.value) ? Number(yearStartFilter.value) : null;
+  const yEndSel   = (typeof yearEndFilter !== 'undefined' && yearEndFilter && yearEndFilter.value) ? Number(yearEndFilter.value) : null;
 
-  const latestYear = years.length ? years[years.length - 1] : null;
-  const prevYear = years.length >= 2 ? years[years.length - 2] : null;
+  const sameYear = (yStartSel != null && yEndSel != null) ? (yStartSel === yEndSel) : (years.length <= 1);
 
-  const latestTotal = latestYear ? (totalsByYear[latestYear].nacimientos || 0) : 0;
-  const prevTotal = prevYear ? (totalsByYear[prevYear].nacimientos || 0) : 0;
-  const delta = (latestYear && prevYear) ? (latestTotal - prevTotal) : 0;
-  const pctDelta = (latestYear && prevYear && prevTotal !== 0) ? (delta / prevTotal) : 0;
+  const yPrev = (!sameYear) ? (yStartSel ?? (years.length >= 2 ? years[years.length - 2] : years[0])) : null;
+  const yCur  = (sameYear) ? (yEndSel ?? (years.length ? years[years.length - 1] : null)) : (yEndSel ?? (years.length ? years[years.length - 1] : null));
 
-  // Nueva tarjeta: % de nacimientos vs hato ganadero (ej: 62 / 1142 = 5.42%)
-  const hatoLatest = latestYear ? (totalsByYear[latestYear].hato_ganadero || 0) : 0;
-  const tasaNacPct = hatoLatest > 0 ? (latestTotal / hatoLatest) * 100 : 0;
+  const totalPrev = (yPrev != null && totalsByYear[yPrev]) ? (totalsByYear[yPrev].nacimientos || 0) : 0;
+  const totalCur  = (yCur != null && totalsByYear[yCur]) ? (totalsByYear[yCur].nacimientos || 0) : 0;
 
-  const kpis = (latestYear && prevYear) ? ([
-    { label: `Total Nacimientos ${prevYear}`, value: prevTotal, icon: '📦' },
-    { label: `Total Nacimientos ${latestYear}`, value: latestTotal, icon: '🍼' },
-    { label: `Nacimientos / Hato (${latestYear})`, value: tasaNacPct, icon: '📊', isPct: true },
+  const delta = (!sameYear && yPrev != null) ? (totalCur - totalPrev) : 0;
+  const pctDelta = (!sameYear && yPrev != null && totalPrev !== 0) ? (delta / totalPrev) : 0;
 
-    { label: 'Variación', value: delta, icon: delta >= 0 ? '📈' : '📉' },
-    { label: '% Variación', value: pctDelta, icon: '🧮', isPct: true },
+  // Tasa (solo cuando es 2026→2026 o mismo año): Nacimientos / Hato
+  const hatoCur = (yCur != null && totalsByYear[yCur]) ? (totalsByYear[yCur].hato_ganadero || 0) : 0;
+  const tasaNacPct = hatoCur > 0 ? (totalCur / hatoCur) * 100 : 0;
+
+  const kpis = sameYear ? ([
+    { label: `Total Nacimientos ${yCur || ''}`.trim(), value: totalCur, icon: '🍼' },
+    { label: 'Machos', value: yCur != null ? (totalsByYear[yCur].machos || 0) : 0, icon: '♂️' },
+    { label: 'Hembras', value: yCur != null ? (totalsByYear[yCur].hembras || 0) : 0, icon: '♀️' },
+    { label: 'Hato Ganadero', value: yCur != null ? (totalsByYear[yCur].hato_ganadero || 0) : 0, icon: '🐄' },
+    { label: `Nacimientos / Hato (${yCur || ''})`.trim(), value: tasaNacPct, icon: '📊', isPct: true },
   ]) : ([
-    { label: `Total Nacimientos ${latestYear || ''}`.trim(), value: latestTotal, icon: '🍼' },
-    { label: 'Machos', value: latestYear ? (totalsByYear[latestYear].machos || 0) : 0, icon: '♂️' },
-    { label: 'Hembras', value: latestYear ? (totalsByYear[latestYear].hembras || 0) : 0, icon: '♀️' },
-    { label: 'Hato Ganadero', value: latestYear ? (totalsByYear[latestYear].hato_ganadero || 0) : 0, icon: '🐄' },
-    { label: `Nacimientos / Hato (${latestYear || ''})`.trim(), value: tasaNacPct, icon: '📊', isPct: true },
+    { label: `Total Nacimientos ${yPrev}`, value: totalPrev, icon: '📦' },
+    { label: `Total Nacimientos ${yCur}`, value: totalCur, icon: '🍼' },
+    { label: 'Variación', value: delta, icon: delta >= 0 ? '📈' : '📉' },
+    { label: `% Variación ${yCur}`, value: pctDelta, icon: '🧮', isPct: true },
   ]);
-const kpiHtml = kpis.map(k => `
+
+  const kpiGridClass = (kpis.length === 5) ? 'grid grid-cols-1 md:grid-cols-5 gap-4' : 'grid grid-cols-1 md:grid-cols-4 gap-4';
+
+  const kpiHtml = kpis.map(k => `
     <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200/70">
       <div class="flex items-center justify-between">
         <div>
@@ -3594,7 +3601,7 @@ const kpiHtml = kpis.map(k => `
 
   content.innerHTML = `
     <div class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
+      <div class="${kpiGridClass}">
         ${kpiHtml}
       </div>
 
@@ -3931,30 +3938,40 @@ function renderMuertesUI(data, allData) {
       totalsByYear[y].adultos += slot.adultos;
     }
   }
+  // Años seleccionados en filtros
+  const yStartSel = (typeof yearStartFilter !== 'undefined' && yearStartFilter && yearStartFilter.value) ? Number(yearStartFilter.value) : null;
+  const yEndSel   = (typeof yearEndFilter !== 'undefined' && yearEndFilter && yearEndFilter.value) ? Number(yearEndFilter.value) : null;
 
-  const latestYear = years.length ? years[years.length - 1] : null;
-  const prevYear = years.length >= 2 ? years[years.length - 2] : null;
+  const sameYear = (yStartSel != null && yEndSel != null) ? (yStartSel === yEndSel) : (years.length <= 1);
 
-  const latestTotal = latestYear ? (totalsByYear[latestYear].muertes || 0) : 0;
-  const prevTotal = prevYear ? (totalsByYear[prevYear].muertes || 0) : 0;
-  const delta = (latestYear && prevYear) ? (latestTotal - prevTotal) : 0;
-  const pctDelta = (latestYear && prevYear && prevTotal !== 0) ? (delta / prevTotal) : 0;
+  const yPrev = (!sameYear) ? (yStartSel ?? (years.length >= 2 ? years[years.length - 2] : years[0])) : null;
+  const yCur  = (sameYear) ? (yEndSel ?? (years.length ? years[years.length - 1] : null)) : (yEndSel ?? (years.length ? years[years.length - 1] : null));
 
-  // %VAR (mismo criterio que la columna %Var. en "Detalle por Finca"): Δ / año_anterior
-  const latestRate = pctDelta;
+  const totalPrev = (yPrev != null && totalsByYear[yPrev]) ? (totalsByYear[yPrev].muertes || 0) : 0;
+  const totalCur  = (yCur != null && totalsByYear[yCur]) ? (totalsByYear[yCur].muertes || 0) : 0;
 
-const kpis = (latestYear && prevYear) ? ([
-    { label: `Total Muertes ${prevYear}`, value: prevTotal, icon: '📦' },
-    { label: `Total Muertes ${latestYear}`, value: latestTotal, icon: '⚠️' },
-    
-    { label: 'Variación', value: delta, icon: delta <= 0 ? '📉' : '📈' },
-    { label: `Tasa ${latestYear}`, value: latestRate, icon: '🧮', isPct: true },
+  const delta = (!sameYear && yPrev != null) ? (totalCur - totalPrev) : 0;
+  // % variación (misma lógica que antes: Δ / año anterior)
+  const pctDelta = (!sameYear && yPrev != null && totalPrev !== 0) ? (delta / totalPrev) : 0;
+
+  // Muertes / Hato (%): muertes sobre masa ganadera (solo cuando es mismo año)
+  const masaCur = (yCur != null && totalsByYear[yCur]) ? (totalsByYear[yCur].masa_ganadera || 0) : 0;
+  const tasaMuertesHato = masaCur > 0 ? (totalCur / masaCur) * 100 : 0;
+
+  const kpis = sameYear ? ([
+    { label: `Total Muertes ${yCur || ''}`.trim(), value: totalCur, icon: '⚠️' },
+    { label: 'Crías Machos', value: yCur != null ? (totalsByYear[yCur].crias_machos || 0) : 0, icon: '♂️' },
+    { label: 'Crías Hembras', value: yCur != null ? (totalsByYear[yCur].crias_hembras || 0) : 0, icon: '♀️' },
+    { label: 'Masa Ganadera', value: yCur != null ? (totalsByYear[yCur].masa_ganadera || 0) : 0, icon: '🐄' },
+    { label: `Muertes / Hato (${yCur || ''})`.trim(), value: tasaMuertesHato, icon: '📊', isPct: true },
   ]) : ([
-    { label: `Total Muertes ${latestYear || ''}`.trim(), value: latestTotal, icon: '⚠️' },
-    { label: 'Crías Machos', value: latestYear ? (totalsByYear[latestYear].crias_machos || 0) : 0, icon: '♂️' },
-    { label: 'Crías Hembras', value: latestYear ? (totalsByYear[latestYear].crias_hembras || 0) : 0, icon: '♀️' },
-    { label: 'Adultos', value: latestYear ? (totalsByYear[latestYear].adultos || 0) : 0, icon: '🐄' },
+    { label: `Total Muertes ${yPrev}`, value: totalPrev, icon: '📦' },
+    { label: `Total Muertes ${yCur}`, value: totalCur, icon: '⚠️' },
+    { label: 'Variación', value: delta, icon: delta <= 0 ? '📉' : '📈' },
+    { label: `Tasa ${yCur}`, value: pctDelta, icon: '🧮', isPct: true },
   ]);
+
+  const kpiGridClass = (kpis.length === 5) ? 'grid grid-cols-1 md:grid-cols-5 gap-4' : 'grid grid-cols-1 md:grid-cols-4 gap-4';
 
   const kpiHtml = kpis.map(k => `
     <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200/70">
@@ -4062,7 +4079,7 @@ const kpis = (latestYear && prevYear) ? ([
 
   content.innerHTML = `
     <div class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div class="${kpiGridClass}">
         ${kpiHtml}
       </div>
 
