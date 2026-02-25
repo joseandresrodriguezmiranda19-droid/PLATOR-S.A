@@ -2078,6 +2078,14 @@ function processMuertes(rows) {
           });
           yearStartFilter.value = years[0];
           yearEndFilter.value = years[years.length - 1];
+
+          // Default en Nacimientos: 2026 a 2026 (si existe). Si no existe, usa el último año disponible.
+          if (window.CURRENT_MODULE === 'nacimientos') {
+            const target = 2026;
+            const ySel = years.includes(target) ? target : years[years.length - 1];
+            yearStartFilter.value = String(ySel);
+            yearEndFilter.value = String(ySel);
+          }
         } else {
           yearStartFilter.innerHTML = `<option value="0">0</option>`;
           yearEndFilter.innerHTML = `<option value="9999">9999</option>`;
@@ -3461,10 +3469,15 @@ function renderNacimientosUI(data, allData) {
   const delta = (latestYear && prevYear) ? (latestTotal - prevTotal) : 0;
   const pctDelta = (latestYear && prevYear && prevTotal !== 0) ? (delta / prevTotal) : 0;
 
+  // Nueva tarjeta: % de nacimientos vs hato ganadero (ej: 62 / 1142 = 5.42%)
+  const hatoLatest = latestYear ? (totalsByYear[latestYear].hato_ganadero || 0) : 0;
+  const tasaNacPct = hatoLatest > 0 ? (latestTotal / hatoLatest) * 100 : 0;
+
   const kpis = (latestYear && prevYear) ? ([
     { label: `Total Nacimientos ${prevYear}`, value: prevTotal, icon: '📦' },
     { label: `Total Nacimientos ${latestYear}`, value: latestTotal, icon: '🍼' },
-    
+    { label: `Nacimientos / Hato (${latestYear})`, value: tasaNacPct, icon: '📊', isPct: true },
+
     { label: 'Variación', value: delta, icon: delta >= 0 ? '📈' : '📉' },
     { label: '% Variación', value: pctDelta, icon: '🧮', isPct: true },
   ]) : ([
@@ -3472,9 +3485,9 @@ function renderNacimientosUI(data, allData) {
     { label: 'Machos', value: latestYear ? (totalsByYear[latestYear].machos || 0) : 0, icon: '♂️' },
     { label: 'Hembras', value: latestYear ? (totalsByYear[latestYear].hembras || 0) : 0, icon: '♀️' },
     { label: 'Hato Ganadero', value: latestYear ? (totalsByYear[latestYear].hato_ganadero || 0) : 0, icon: '🐄' },
+    { label: `Nacimientos / Hato (${latestYear || ''})`.trim(), value: tasaNacPct, icon: '📊', isPct: true },
   ]);
-
-  const kpiHtml = kpis.map(k => `
+const kpiHtml = kpis.map(k => `
     <div class="bg-white rounded-xl p-5 shadow-sm border border-slate-200/70">
       <div class="flex items-center justify-between">
         <div>
@@ -3581,7 +3594,7 @@ function renderNacimientosUI(data, allData) {
 
   content.innerHTML = `
     <div class="space-y-6">
-      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+      <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-5 gap-4">
         ${kpiHtml}
       </div>
 
