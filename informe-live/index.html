@@ -170,52 +170,60 @@ canvas { cursor: zoom-in; }
   <div class="pt-2"><p class="text-[10px] font-bold text-slate-400/80 uppercase tracking-widest px-3 mb-2">Módulos</p></div>
   <button id="nav-inventario_general" onclick="switchModule('inventario_general')" class="sidebar-item active w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 7h18M3 12h18M3 17h18" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 6c4 0 7-1.5 7-3s-3-3-7-3-7 1.5-7 3 3 3 7 3zm7 0v6c0 1.5-3 3-7 3s-7-1.5-7-3V6m14 6v6c0 1.5-3 3-7 3s-7-1.5-7-3v-6"/>
         </svg>
         INVENTARIO X CATEGORÍA
       </button>
   <button id="nav-flujo_ganado_categoria" onclick="switchModule('flujo_ganado_categoria')" class="sidebar-item w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16M7 6v12" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M17 1l4 4-4 4M7 23l-4-4 4-4M21 5H3M3 19h18"/>
         </svg>
         FLUJO DE GANADO POR CATEGORÍA
       </button>
   <button id="nav-inventario_movimiento" onclick="switchModule('inventario_movimiento')" class="sidebar-item w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v6h6M20 20v-6h-6M5 19a9 9 0 0114-14" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
         </svg>
         INVENTARIO: ENTRADAS Y SALIDAS
       </button>
   <button id="nav-ventas" onclick="switchModule('ventas')" class="sidebar-item w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 1.343-3 3v1H7a1 1 0 000 2h2v1c0 1.657 1.343 3 3 3s3-1.343 3-3v-1h2a1 1 0 100-2h-2v-1c0-1.657-1.343-3-3-3z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 17l6-6 4 4 8-8"/>
         </svg>
         VENTAS 2026
       </button>
   <div class="pt-2"><p class="text-[10px] font-bold text-slate-400/80 uppercase tracking-widest px-3 mb-2">Reproducción</p></div>
   <button id="nav-nacimientos" onclick="switchModule('nacimientos')" class="sidebar-item w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v12m6-6H6" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M4 12l4 4 8-8"/>
         </svg>
         NACIMIENTOS 2026
       </button>
   <button id="nav-proyeccion_partos" onclick="switchModule('proyeccion_partos')" class="sidebar-item w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3M4 11h16M6 21h12a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+          <rect x="3" y="4" width="18" height="18" rx="2" ry="2" stroke-width="2"></rect>
+          <line x1="16" y1="2" x2="16" y2="6" stroke-width="2"></line>
+          <line x1="8" y1="2" x2="8" y2="6" stroke-width="2"></line>
         </svg>
         PROYECCIÓN DE PARTOS
       </button>
   <button id="nav-destete" onclick="switchModule('destete')" class="sidebar-item w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-3.866 0-7 1.79-7 4v4h14v-4c0-2.21-3.134-4-7-4zm0 0V4m0 0H9m3 0h3"></path>
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M3 17l6-6 4 4 8-8"/>
         </svg>
         DESTETE DE TERNEROS
       </button>
   <div class="pt-2"><p class="text-[10px] font-bold text-slate-400/80 uppercase tracking-widest px-3 mb-2">Mortalidad</p></div>
   <button id="nav-muertes" onclick="switchModule('muertes')" class="sidebar-item w-full flex items-center px-4 py-3 text-sm font-medium rounded-lg bg-transparent border border-slate-800/60 text-slate-200 hover:bg-white/5 hover:border-slate-700 transition-colors">
         <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422A12.083 12.083 0 0121 17.5a12.083 12.083 0 01-9 3.5 12.083 12.083 0 01-9-3.5 12.083 12.083 0 012.84-6.922L12 14z" />
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01M10.29 3.86l-7.5 13A1 1 0 003.67 18h16.66a1 1 0 00.88-1.5l-7.5-13a1 1 0 00-1.74 0z"/>
         </svg>
         MUERTES 2026
       </button>
