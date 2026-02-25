@@ -2079,8 +2079,8 @@ function processMuertes(rows) {
           yearStartFilter.value = years[0];
           yearEndFilter.value = years[years.length - 1];
 
-          // Default en Nacimientos: 2026 a 2026 (si existe). Si no existe, usa el último año disponible.
-          if (window.CURRENT_MODULE === 'nacimientos') {
+          // Default en Nacimientos/Muertes: 2026 a 2026 (si existe). Si no existe, usa el último año disponible.
+          if (window.CURRENT_MODULE === 'nacimientos' || window.CURRENT_MODULE === 'muertes') {
             const target = 2026;
             const ySel = years.includes(target) ? target : years[years.length - 1];
             yearStartFilter.value = String(ySel);
@@ -3940,20 +3940,23 @@ function renderMuertesUI(data, allData) {
   const delta = (latestYear && prevYear) ? (latestTotal - prevTotal) : 0;
   const pctDelta = (latestYear && prevYear && prevTotal !== 0) ? (delta / prevTotal) : 0;
 
-  // %VAR (mismo criterio que la columna %Var. en "Detalle por Finca"): Δ / año_anterior
-  const latestRate = pctDelta;
+  // Nueva tarjeta: % de muertes vs hato (masa ganadera) del año seleccionado
+  const masaLatest = latestYear ? (totalsByYear[latestYear].masa_ganadera || 0) : 0;
+  const tasaMuertesPct = masaLatest > 0 ? (latestTotal / masaLatest) * 100 : 0;
 
 const kpis = (latestYear && prevYear) ? ([
     { label: `Total Muertes ${prevYear}`, value: prevTotal, icon: '📦' },
     { label: `Total Muertes ${latestYear}`, value: latestTotal, icon: '⚠️' },
-    
+    { label: `Muertes / Hato (${latestYear})`, value: tasaMuertesPct, icon: '📊', isPct: true },
+
     { label: 'Variación', value: delta, icon: delta <= 0 ? '📉' : '📈' },
-    { label: `Tasa ${latestYear}`, value: latestRate, icon: '🧮', isPct: true },
+    { label: '% Variación', value: pctDelta, icon: '🧮', isPct: true },
   ]) : ([
     { label: `Total Muertes ${latestYear || ''}`.trim(), value: latestTotal, icon: '⚠️' },
     { label: 'Crías Machos', value: latestYear ? (totalsByYear[latestYear].crias_machos || 0) : 0, icon: '♂️' },
     { label: 'Crías Hembras', value: latestYear ? (totalsByYear[latestYear].crias_hembras || 0) : 0, icon: '♀️' },
-    { label: 'Adultos', value: latestYear ? (totalsByYear[latestYear].adultos || 0) : 0, icon: '🐄' },
+    { label: 'Masa Ganadera', value: latestYear ? (totalsByYear[latestYear].masa_ganadera || 0) : 0, icon: '🐄' },
+    { label: `Muertes / Hato (${latestYear || ''})`.trim(), value: tasaMuertesPct, icon: '📊', isPct: true },
   ]);
 
   const kpiHtml = kpis.map(k => `
