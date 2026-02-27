@@ -5542,7 +5542,8 @@ function clearToken() {
     if (!f) return;
 
     const token = tokenInput.value.trim();
-    status.textContent = "Publicando...";
+saveToken(token);
+status.textContent = "Publicando...";
     try {
       await publishInformeExcelToKV(f, token);
       status.textContent = "✅ Publicado. Cargando...";
@@ -5559,7 +5560,8 @@ function clearToken() {
 
   btnWipe.onclick = async () => {
     const token = tokenInput.value.trim();
-    if (!token) { status.textContent = "❌ Escribe la clave."; return; }
+saveToken(token);
+if (!token) { status.textContent = "❌ Escribe la clave."; return; }
 
     const ok = confirm("¿Seguro que deseas ELIMINAR los datos del Informe para todos? Esto dejará el dashboard en blanco.");
     if (!ok) return;
