@@ -5457,7 +5457,19 @@ function setBlankState(msg = "No hay datos publicados. Usa Editar → Publicar E
 }
 
 /** ====== UI: Botón Editar con panel ====== **/
-function injectAdminUI() {
+function loadSavedToken() {
+  try { return localStorage.getItem("PLATOR_UPLOAD_TOKEN") || ""; }
+  catch (e) { return ""; }
+}
+function saveToken(token) {
+  try { localStorage.setItem("PLATOR_UPLOAD_TOKEN", token || ""); }
+  catch (e) {}
+}
+function clearToken() {
+  try { localStorage.removeItem("PLATOR_UPLOAD_TOKEN"); }
+  catch (e) {}
+}
+  function injectAdminUI() {
   const dropZone = document.getElementById("dropZone");
   if (!dropZone) return;
 
@@ -5513,6 +5525,7 @@ function injectAdminUI() {
 
   const excelInput = panel.querySelector("#kvExcelInput");
   const tokenInput = panel.querySelector("#kvToken");
+    tokenInput.value = loadSavedToken();
 
   const btnPickExcel = panel.querySelector("#btnPickExcelKV");
   const btnWipe = panel.querySelector("#btnWipeKV");
