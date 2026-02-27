@@ -5526,6 +5526,7 @@ function clearToken() {
   const excelInput = panel.querySelector("#kvExcelInput");
   const tokenInput = panel.querySelector("#kvToken");
     tokenInput.value = loadSavedToken();
+    tokenInput.addEventListener("input", () => saveToken(tokenInput.value.trim()));
 
   const btnPickExcel = panel.querySelector("#btnPickExcelKV");
   const btnWipe = panel.querySelector("#btnWipeKV");
