@@ -270,10 +270,10 @@ canvas { cursor: zoom-in; }
         
         <div id="categoriaFilterWrap" class="flex flex-col gap-1 hidden">
           <label class="text-[10px] font-bold text-slate-400 uppercase">Categoría</label>
-          <select id="categoriaFilter" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-[220px]">
-            <option value="HEMBRAS" selected>Hembras</option>
+          <select id="categoriaFilter" multiple size="3" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-[220px] h-[110px]">
+            <option value="ALL" selected>Todos</option>
+            <option value="HEMBRAS">Hembras</option>
             <option value="MACHOS">Machos</option>
-            <option value="CAFE">Venta de Café</option>
           </select>
         </div>
 
@@ -728,6 +728,32 @@ function animateChartsIn() {
     const yearFiltersDiv = document.getElementById('yearFilters');
     const resetFilters = document.getElementById('resetFilters');
 
+    function setCategoriaVentasSelection(values) {
+      if (!categoriaFilter) return;
+      const wanted = new Set((values || []).map(v => String(v).toUpperCase()));
+      Array.from(categoriaFilter.options).forEach(opt => {
+        opt.selected = wanted.has(String(opt.value).toUpperCase());
+      });
+    }
+
+    function getCategoriaVentasSelection() {
+      if (!categoriaFilter) return ['MACHOS', 'HEMBRAS'];
+
+      const selected = Array.from(categoriaFilter.selectedOptions || [])
+        .map(opt => String(opt.value).toUpperCase());
+
+      if (selected.includes('ALL') || selected.length === 0) {
+        return ['MACHOS', 'HEMBRAS'];
+      }
+
+      const valid = selected.filter(v => v === 'MACHOS' || v === 'HEMBRAS');
+      return valid.length ? valid : ['MACHOS', 'HEMBRAS'];
+    }
+
+    function resetCategoriaVentasSelection() {
+      setCategoriaVentasSelection(['ALL']);
+    }
+
     window.onload = async () => {
       // Modo solo-lectura (sin UI de carga). Los datos se cargan automáticamente desde /data/
       setupFilters();
@@ -778,10 +804,10 @@ function animateChartsIn() {
       if (!categoriaFilterWrap) return;
       if (mod === 'ventas') {
         categoriaFilterWrap.classList.remove('hidden');
-        if (categoriaFilter) categoriaFilter.value = 'HEMBRAS';
+        resetCategoriaVentasSelection();
       } else {
         categoriaFilterWrap.classList.add('hidden');
-        if (categoriaFilter) categoriaFilter.value = 'HEMBRAS';
+        resetCategoriaVentasSelection();
       }
     }
 
@@ -833,7 +859,12 @@ function switchModule(mod) {
       if (monthFilter) monthFilter.onchange = update;
       if (sexoFilter) sexoFilter.onchange = update;
       if (categoriaFilter) categoriaFilter.onchange = update;
-      resetFilters.onclick = () => { populateFilters(); if (sexoFilter) sexoFilter.value = 'todos'; if (categoriaFilter) categoriaFilter.value = 'all'; update(); };
+      resetFilters.onclick = () => {
+        populateFilters();
+        if (sexoFilter) sexoFilter.value = 'todos';
+        resetCategoriaVentasSelection();
+        update();
+      };
     }
 
     // =========================
@@ -2591,12 +2622,10 @@ const todos = {
       
 
       
-      // --- Categoría (solo Ventas) ---
+      // --- Categoría (solo Ventas: multiselección Machos/Hembras/Todos) ---
       if (mod === 'ventas' && categoriaFilterWrap && !categoriaFilterWrap.classList.contains('hidden') && categoriaFilter) {
-        const cv = categoriaFilter.value;
-        if (cv && cv !== 'all') {
-          filtered = filtered.filter(d => (d.tipo || '').toString().toUpperCase() === cv);
-        }
+        const categoriasSeleccionadas = getCategoriaVentasSelection();
+        filtered = filtered.filter(d => categoriasSeleccionadas.includes((d.tipo || '').toString().toUpperCase()));
       }
 
 // --- Month filter (si aplica) ---
