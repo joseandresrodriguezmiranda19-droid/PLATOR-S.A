@@ -3511,7 +3511,7 @@ function renderNacimientosUI(data, allData) {
     }
   }
 
-  const fincas = Array.from(fincasSet).filter(f => normalizeKey(f) !== 'TOTAL' && normalizeKey(f) !== 'FINCA').sort();
+  const fincas = Array.from(fincasSet).filter(f => normKey(f) !== 'TOTAL' && normKey(f) !== 'FINCA').sort();
   const years = Array.from(yearsSet).sort((a, b) => a - b);
 
   // Totales por año (excluyendo TOTAL)
