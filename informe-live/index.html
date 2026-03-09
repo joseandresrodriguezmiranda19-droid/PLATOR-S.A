@@ -268,13 +268,29 @@ canvas { cursor: zoom-in; }
         </div>
 
         
-        <div id="categoriaFilterWrap" class="flex flex-col gap-1 hidden">
+        <div id="categoriaFilterWrap" class="flex flex-col gap-1 hidden relative">
           <label class="text-[10px] font-bold text-slate-400 uppercase">Categoría</label>
-          <select id="categoriaFilter" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-[220px]">
-            <option value="HEMBRAS" selected>Hembras</option>
-            <option value="MACHOS">Machos</option>
-            <option value="CAFE">Venta de Café</option>
-          </select>
+          <button id="categoriaFilterBtn" type="button" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-[240px] flex items-center justify-between gap-3">
+            <span id="categoriaFilterLabel" class="truncate text-left">Todos</span>
+            <svg class="w-4 h-4 shrink-0 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </button>
+
+          <div id="categoriaFilterMenu" class="hidden absolute top-full left-0 mt-1 z-30 min-w-[240px] bg-white border border-slate-200 rounded-lg shadow-lg p-2">
+            <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-50 cursor-pointer text-sm">
+              <input type="checkbox" class="categoriaFilterCheck rounded border-slate-300" value="TODOS" checked />
+              <span>Todos</span>
+            </label>
+            <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-50 cursor-pointer text-sm">
+              <input type="checkbox" class="categoriaFilterCheck rounded border-slate-300" value="HEMBRAS" />
+              <span>Hembras</span>
+            </label>
+            <label class="flex items-center gap-2 px-2 py-1.5 rounded hover:bg-slate-50 cursor-pointer text-sm">
+              <input type="checkbox" class="categoriaFilterCheck rounded border-slate-300" value="MACHOS" />
+              <span>Machos</span>
+            </label>
+          </div>
         </div>
 
         <div id="yearFilters" class="flex gap-4">
@@ -718,7 +734,10 @@ function animateChartsIn() {
     const fincaFilterWrap = document.getElementById('fincaFilterWrap');
     const fincaFilter = document.getElementById('fincaFilter');
     const categoriaFilterWrap = document.getElementById('categoriaFilterWrap');
-    const categoriaFilter = document.getElementById('categoriaFilter');
+    const categoriaFilterBtn = document.getElementById('categoriaFilterBtn');
+    const categoriaFilterLabel = document.getElementById('categoriaFilterLabel');
+    const categoriaFilterMenu = document.getElementById('categoriaFilterMenu');
+    const categoriaFilterChecks = () => Array.from(document.querySelectorAll('.categoriaFilterCheck'));
     const monthFilterWrap = document.getElementById('monthFilterWrap');
     const monthFilter = document.getElementById('monthFilter');
     const sexoFilterWrap = document.getElementById('sexoFilterWrap');
@@ -774,14 +793,111 @@ function animateChartsIn() {
     }
 
     
+
+    function getSelectedCategorias() {
+      const checks = categoriaFilterChecks();
+      const todosCheck = checks.find(ch => (ch.value || '').toString().toUpperCase() === 'TODOS');
+      if (todosCheck && todosCheck.checked) return ['TODOS'];
+
+      const selected = checks
+        .filter(ch => ch.checked && ['HEMBRAS', 'MACHOS'].includes((ch.value || '').toString().toUpperCase()))
+        .map(ch => (ch.value || '').toString().toUpperCase());
+
+      return selected.length ? selected : ['TODOS'];
+    }
+
+    function setSelectedCategorias(values) {
+      const target = new Set((values || []).map(v => (v || '').toString().toUpperCase()));
+      const checks = categoriaFilterChecks();
+      checks.forEach(ch => {
+        const key = (ch.value || '').toString().toUpperCase();
+        ch.checked = target.has(key);
+      });
+      syncCategoriaTodosState();
+      updateCategoriaFilterLabel();
+    }
+
+    function syncCategoriaTodosState(changedValue = null) {
+      const checks = categoriaFilterChecks();
+      const todosCheck = checks.find(ch => (ch.value || '').toString().toUpperCase() === 'TODOS');
+      const hembrasCheck = checks.find(ch => (ch.value || '').toString().toUpperCase() === 'HEMBRAS');
+      const machosCheck = checks.find(ch => (ch.value || '').toString().toUpperCase() === 'MACHOS');
+
+      if (!todosCheck) return;
+
+      if (changedValue === 'TODOS' && todosCheck.checked) {
+        if (hembrasCheck) hembrasCheck.checked = false;
+        if (machosCheck) machosCheck.checked = false;
+        return;
+      }
+
+      const anySpecific = (hembrasCheck && hembrasCheck.checked) || (machosCheck && machosCheck.checked);
+
+      if (changedValue === 'HEMBRAS' || changedValue === 'MACHOS') {
+        if (anySpecific) {
+          todosCheck.checked = false;
+        } else {
+          todosCheck.checked = true;
+        }
+      }
+
+      if (!anySpecific && !todosCheck.checked) {
+        todosCheck.checked = true;
+      }
+    }
+
+    function updateCategoriaFilterLabel() {
+      if (!categoriaFilterLabel) return;
+      const selected = getSelectedCategorias();
+      const namesMap = { TODOS: 'Todos', HEMBRAS: 'Hembras', MACHOS: 'Machos' };
+
+      if (selected.includes('TODOS')) {
+        categoriaFilterLabel.textContent = 'Todos';
+        return;
+      }
+      if (selected.length === 1) {
+        categoriaFilterLabel.textContent = namesMap[selected[0]] || selected[0];
+        return;
+      }
+      categoriaFilterLabel.textContent = selected.map(v => namesMap[v] || v).join(', ');
+    }
+
+    function setupCategoriaMultiselect(onChangeCb) {
+      if (!categoriaFilterBtn || !categoriaFilterMenu) return;
+
+      categoriaFilterBtn.onclick = (e) => {
+        e.stopPropagation();
+        categoriaFilterMenu.classList.toggle('hidden');
+      };
+
+      categoriaFilterMenu.addEventListener('click', (e) => {
+        e.stopPropagation();
+      });
+
+      document.addEventListener('click', () => {
+        categoriaFilterMenu.classList.add('hidden');
+      });
+
+      categoriaFilterChecks().forEach(ch => {
+        ch.addEventListener('change', () => {
+          syncCategoriaTodosState((ch.value || '').toString().toUpperCase());
+          updateCategoriaFilterLabel();
+          if (typeof onChangeCb === 'function') onChangeCb();
+        });
+      });
+
+      updateCategoriaFilterLabel();
+    }
+
     function updateCategoriaFilterVisibility(mod) {
       if (!categoriaFilterWrap) return;
       if (mod === 'ventas') {
         categoriaFilterWrap.classList.remove('hidden');
-        if (categoriaFilter) categoriaFilter.value = 'HEMBRAS';
+        setSelectedCategorias(['TODOS']);
       } else {
         categoriaFilterWrap.classList.add('hidden');
-        if (categoriaFilter) categoriaFilter.value = 'HEMBRAS';
+        if (categoriaFilterMenu) categoriaFilterMenu.classList.add('hidden');
+        setSelectedCategorias(['TODOS']);
       }
     }
 
@@ -832,8 +948,13 @@ function switchModule(mod) {
       yearEndFilter.onchange = update;
       if (monthFilter) monthFilter.onchange = update;
       if (sexoFilter) sexoFilter.onchange = update;
-      if (categoriaFilter) categoriaFilter.onchange = update;
-      resetFilters.onclick = () => { populateFilters(); if (sexoFilter) sexoFilter.value = 'todos'; if (categoriaFilter) categoriaFilter.value = 'all'; update(); };
+      setupCategoriaMultiselect(update);
+      resetFilters.onclick = () => {
+        populateFilters();
+        if (sexoFilter) sexoFilter.value = 'todos';
+        setSelectedCategorias(['TODOS']);
+        update();
+      };
     }
 
     // =========================
@@ -2591,11 +2712,11 @@ const todos = {
       
 
       
-      // --- Categoría (solo Ventas) ---
-      if (mod === 'ventas' && categoriaFilterWrap && !categoriaFilterWrap.classList.contains('hidden') && categoriaFilter) {
-        const cv = categoriaFilter.value;
-        if (cv && cv !== 'all') {
-          filtered = filtered.filter(d => (d.tipo || '').toString().toUpperCase() === cv);
+      // --- Categoría (solo Ventas / multiselección) ---
+      if (mod === 'ventas' && categoriaFilterWrap && !categoriaFilterWrap.classList.contains('hidden')) {
+        const cvs = getSelectedCategorias();
+        if (!cvs.includes('TODOS')) {
+          filtered = filtered.filter(d => cvs.includes((d.tipo || '').toString().toUpperCase()));
         }
       }
 
@@ -5160,56 +5281,105 @@ charts.de0 = new Chart(document.getElementById('de0'), {
 function renderVentasUI(data) {
   const sorted = [...data].sort((a,b)=> (a.anio-b.anio) || (monthIndex(a.mes)-monthIndex(b.mes)));
 
+  const selectedCategorias = (typeof getSelectedCategorias === 'function')
+    ? getSelectedCategorias()
+    : ['HEMBRAS', 'MACHOS', 'CAFE'];
+
+  const namesMap = { HEMBRAS: 'Hembras', MACHOS: 'Machos', CAFE: 'Venta de Café' };
+  const selectedNames = selectedCategorias.map(v => namesMap[v] || v);
+
   const totalImp = sorted.reduce((acc,d)=>acc+(d.importe||0),0);
   const totalKilos = sorted.reduce((acc,d)=>acc+(d.kilos||0),0);
   const totalCant = sorted.reduce((acc,d)=>acc+(d.cantidad||0),0);
-  const precioPromKg = totalKilos > 0 ? (totalImp / totalKilos) : 0;
+  const totalRegistros = sorted.length;
 
   const pico = sorted.reduce((best, cur) => (cur.importe||0) > (best.importe||0) ? cur : best, sorted[0] || { mes:'N/A', anio:'', importe:0 });
 
-  // Ajuste: si la categoría es CAFE, el KPI principal debe mostrarse en LIBRAS (no kilos)
-  const cv = (document.getElementById('categoriaFilter')?.value || 'HEMBRAS').toString().toUpperCase();
-  const isCafe = (cv === 'CAFE') || ((sorted[0]?.tipo || '').toString().toUpperCase() === 'CAFE');
+  const onlyCafe = (selectedCategorias.length === 1 && selectedCategorias[0] === 'CAFE');
+  const onlyOne = (selectedCategorias.length === 1);
+  const multiMode = selectedCategorias.length > 1;
+
   const totalLibras = sorted.reduce((acc,d)=> acc + ((((d.unidad||'').toString().toUpperCase().includes('LIB')) ? (d.cantidad||0) : 0)), 0);
-  const qtyMain = isCafe ? totalLibras : totalKilos;
-  const mainLabel = isCafe ? 'Libras Totales' : 'Kilos Totales';
-  const precioPromMain = qtyMain > 0 ? (totalImp / qtyMain) : 0;
-  const priceSmallLabel = isCafe ? 'Prom. precio/libra' : 'Prom. precio/kg';
+  const precioPromKg = totalKilos > 0 ? (totalImp / totalKilos) : 0;
+  const precioPromLb = totalLibras > 0 ? (totalImp / totalLibras) : 0;
 
+  let kpiHtml = '';
+  if (onlyCafe) {
+    kpiHtml = `
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <p class="text-sm font-medium text-slate-500">Ingresos Totales</p>
+        <h3 class="text-2xl font-bold text-slate-800 mt-1">${fmtNum(totalImp, 2)}</h3>
+        <p class="text-xs text-slate-400 mt-1">Mes pico: ${pico.mes} ${pico.anio}</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <p class="text-sm font-medium text-slate-500">Libras Totales</p>
+        <h3 class="text-2xl font-bold text-slate-800 mt-1">${fmtNum(totalLibras, 0)}</h3>
+        <p class="text-xs text-slate-400 mt-1">Prom. precio/libra: ${fmtNum(precioPromLb, 2)}</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <p class="text-sm font-medium text-slate-500">Precio Promedio</p>
+        <h3 class="text-2xl font-bold text-slate-800 mt-1">${fmtNum(precioPromLb, 2)} /Lb</h3>
+        <p class="text-xs text-slate-400 mt-1">Categoría: Venta de Café</p>
+      </div>
+    `;
+  } else if (onlyOne) {
+    kpiHtml = `
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <p class="text-sm font-medium text-slate-500">Ingresos Totales</p>
+        <h3 class="text-2xl font-bold text-slate-800 mt-1">${fmtNum(totalImp, 2)}</h3>
+        <p class="text-xs text-slate-400 mt-1">Mes pico: ${pico.mes} ${pico.anio}</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <p class="text-sm font-medium text-slate-500">Kilos Totales</p>
+        <h3 class="text-2xl font-bold text-slate-800 mt-1">${fmtNum(totalKilos, 0)}</h3>
+        <p class="text-xs text-slate-400 mt-1">Prom. precio/kg: ${fmtNum(precioPromKg, 2)}</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <p class="text-sm font-medium text-slate-500">Cantidad Total</p>
+        <h3 class="text-2xl font-bold text-slate-800 mt-1">${fmtNum(totalCant, 0)}</h3>
+        <p class="text-xs text-slate-400 mt-1">Categoría: ${selectedNames[0]}</p>
+      </div>
+    `;
+  } else {
+    kpiHtml = `
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <p class="text-sm font-medium text-slate-500">Ingresos Totales</p>
+        <h3 class="text-2xl font-bold text-slate-800 mt-1">${fmtNum(totalImp, 2)}</h3>
+        <p class="text-xs text-slate-400 mt-1">Mes pico: ${pico.mes} ${pico.anio}</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <p class="text-sm font-medium text-slate-500">Categorías Activas</p>
+        <h3 class="text-2xl font-bold text-slate-800 mt-1">${selectedCategorias.length}</h3>
+        <p class="text-xs text-slate-400 mt-1">${selectedNames.join(', ')}</p>
+      </div>
+      <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
+        <p class="text-sm font-medium text-slate-500">Registros Filtrados</p>
+        <h3 class="text-2xl font-bold text-slate-800 mt-1">${fmtNum(totalRegistros, 0)}</h3>
+        <p class="text-xs text-slate-400 mt-1">Vista combinada</p>
+      </div>
+    `;
+  }
 
-  document.getElementById('kpiContainer').innerHTML = `
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-      <p class="text-sm font-medium text-slate-500">Ingresos Totales</p>
-      <h3 class="text-2xl font-bold text-slate-800 mt-1">${fmtNum(totalImp, 2)}</h3>
-      <p class="text-xs text-slate-400 mt-1">Mes pico: ${pico.mes} ${pico.anio}</p>
-    </div>
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-      <p class="text-sm font-medium text-slate-500">${mainLabel}</p>
-      <h3 class="text-2xl font-bold text-slate-800 mt-1">${fmtNum(qtyMain, 0)}</h3>
-      <p class="text-xs text-slate-400 mt-1">${priceSmallLabel}: ${fmtNum(precioPromMain, 2)}</p>
-    </div>
-    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-      <p class="text-sm font-medium text-slate-500">${isCafe ? 'Precio Promedio' : 'Cantidad Total'}</p>
-      <h3 class="text-2xl font-bold text-slate-800 mt-1">${isCafe ? (fmtNum(precioPromMain, 2) + ' /Lb') : fmtNum(totalCant, 0)}</h3>
-      <p class="text-xs text-slate-400 mt-1">${isCafe ? ('Libras: ' + fmtNum(totalLibras, 0)) : 'Animales (Cbzs)'}</p>
-    </div>
-  `;
+  document.getElementById('kpiContainer').innerHTML = kpiHtml;
 
-  // Agregados por mes (total)
   const key = (d) => `${d.anio}-${String(monthIndex(d.mes)+1).padStart(2,'0')}`;
   const byMonth = {};
   sorted.forEach(d=>{
     const k = key(d);
-    if (!byMonth[k]) byMonth[k] = { label: `${d.mes.slice(0,3)} ${d.anio}`, imp:0, kilos:0 };
+    if (!byMonth[k]) byMonth[k] = { label: `${d.mes.slice(0,3)} ${d.anio}`, imp:0, kilos:0, libras:0, registros:0 };
     byMonth[k].imp += (d.importe||0);
     byMonth[k].kilos += (d.kilos||0);
+    if (((d.unidad||'').toString().toUpperCase().includes('LIB'))) byMonth[k].libras += (d.cantidad||0);
+    byMonth[k].registros += 1;
   });
+
   const monthKeys = Object.keys(byMonth).sort();
   const labels = monthKeys.map(k=>byMonth[k].label);
   const impVals = monthKeys.map(k=>byMonth[k].imp);
   const kiloVals = monthKeys.map(k=>byMonth[k].kilos);
+  const libraVals = monthKeys.map(k=>byMonth[k].libras);
+  const registrosVals = monthKeys.map(k=>byMonth[k].registros);
 
-  // Ingresos por tipo (HEMBRAS/MACHOS/CAFE)
   const byTipo = {};
   sorted.forEach(d=>{
     const t = (d.tipo||'OTROS');
@@ -5218,6 +5388,21 @@ function renderVentasUI(data) {
   const tipoLabels = Object.keys(byTipo);
   const tipoVals = tipoLabels.map(t=>byTipo[t]);
 
+  const chart2Title = onlyCafe
+    ? 'Libras por Mes'
+    : multiMode
+      ? 'Registros por Mes'
+      : 'Kilos por Mes';
+
+  const chart2Label = onlyCafe
+    ? 'Libras'
+    : multiMode
+      ? 'Registros'
+      : 'Kilos';
+
+  const chart2Data = onlyCafe ? libraVals : (multiMode ? registrosVals : kiloVals);
+  const chart2Type = multiMode ? 'bar' : 'line';
+
   chartsContainer.innerHTML = `
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-8">
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
@@ -5225,7 +5410,7 @@ function renderVentasUI(data) {
         <div class="h-[360px]"><canvas id="v1"></canvas></div>
       </div>
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-        <h4 class="font-bold text-slate-700 mb-4">Kilos por Mes</h4>
+        <h4 class="font-bold text-slate-700 mb-4">${chart2Title}</h4>
         <div class="h-[360px]"><canvas id="v2"></canvas></div>
       </div>
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 lg:col-span-2">
@@ -5247,8 +5432,8 @@ function renderVentasUI(data) {
   });
 
   charts.v2 = new Chart(document.getElementById('v2'), {
-    type: 'line',
-    data: { labels, datasets: [{ label: 'Kilos', data: kiloVals, tension: 0.25 }] },
+    type: chart2Type,
+    data: { labels, datasets: [{ label: chart2Label, data: chart2Data, tension: 0.25, borderRadius: 8 }] },
     options: {
       responsive: true, maintainAspectRatio: false,
       animation: { duration: 650 },
