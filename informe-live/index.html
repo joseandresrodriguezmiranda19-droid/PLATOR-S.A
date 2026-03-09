@@ -5281,7 +5281,8 @@ function renderVentasUI(data) {
         impCafe: 0,
         kilosMachos: 0,
         kilosHembras: 0,
-        kilosCafe: 0
+        kilosCafe: 0,
+        librasCafe: 0
       };
     }
 
@@ -5298,6 +5299,7 @@ function renderVentasUI(data) {
     } else if (tipo === 'CAFE') {
       byMonth[k].impCafe += (d.importe || 0);
       byMonth[k].kilosCafe += (d.kilos || 0);
+      byMonth[k].librasCafe += (((d.unidad || '').toString().toUpperCase().includes('LIB')) ? (d.cantidad || 0) : 0);
     }
   });
 
@@ -5321,7 +5323,7 @@ function renderVentasUI(data) {
         <div class="h-[360px]"><canvas id="v1"></canvas></div>
       </div>
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-        <h4 class="font-bold text-slate-700 mb-4">Kilos por Mes</h4>
+        <h4 class="font-bold text-slate-700 mb-4">${isCafe ? 'Libras por Mes' : 'Kilos por Mes'}</h4>
         <div class="h-[360px]"><canvas id="v2"></canvas></div>
       </div>
       <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 lg:col-span-2">
@@ -5385,7 +5387,7 @@ function renderVentasUI(data) {
   if (isCafe) {
     kilosDatasets = [{
       label: 'Café',
-      data: monthKeys.map(k => byMonth[k].kilosCafe),
+      data: monthKeys.map(k => byMonth[k].librasCafe),
       borderColor: COLOR_CAFE,
       backgroundColor: COLOR_CAFE,
       tension: 0.25
