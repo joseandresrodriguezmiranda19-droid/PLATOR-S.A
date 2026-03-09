@@ -270,11 +270,23 @@ canvas { cursor: zoom-in; }
         
         <div id="categoriaFilterWrap" class="flex flex-col gap-1 hidden">
           <label class="text-[10px] font-bold text-slate-400 uppercase">Categoría</label>
-          <select id="categoriaFilter" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500 min-w-[220px]">
-            <option value="HEMBRAS" selected>Hembras</option>
-            <option value="MACHOS">Machos</option>
-            <option value="CAFE">Venta de Café</option>
-          </select>
+          <div class="flex flex-col gap-2 min-w-[260px]">
+            <select id="categoriaFilter" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-blue-500">
+              <option value="GANADO" selected>Ganado</option>
+              <option value="CAFE">Venta de Café</option>
+            </select>
+
+            <div id="categoriaGanadoChecks" class="bg-slate-50 border border-slate-200 rounded-lg px-3 py-2 flex flex-wrap items-center gap-4 min-h-[42px]">
+              <label class="inline-flex items-center gap-2 text-sm text-slate-700 cursor-pointer select-none">
+                <input id="categoriaMachosCheck" type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" checked />
+                <span>Machos</span>
+              </label>
+              <label class="inline-flex items-center gap-2 text-sm text-slate-700 cursor-pointer select-none">
+                <input id="categoriaHembrasCheck" type="checkbox" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500" checked />
+                <span>Hembras</span>
+              </label>
+            </div>
+          </div>
         </div>
 
         <div id="yearFilters" class="flex gap-4">
@@ -719,6 +731,9 @@ function animateChartsIn() {
     const fincaFilter = document.getElementById('fincaFilter');
     const categoriaFilterWrap = document.getElementById('categoriaFilterWrap');
     const categoriaFilter = document.getElementById('categoriaFilter');
+    const categoriaGanadoChecks = document.getElementById('categoriaGanadoChecks');
+    const categoriaMachosCheck = document.getElementById('categoriaMachosCheck');
+    const categoriaHembrasCheck = document.getElementById('categoriaHembrasCheck');
     const monthFilterWrap = document.getElementById('monthFilterWrap');
     const monthFilter = document.getElementById('monthFilter');
     const sexoFilterWrap = document.getElementById('sexoFilterWrap');
@@ -774,14 +789,41 @@ function animateChartsIn() {
     }
 
     
+    function updateVentasCategoriaUI() {
+      if (!categoriaFilter || !categoriaGanadoChecks || !categoriaMachosCheck || !categoriaHembrasCheck) return;
+      const isCafe = (categoriaFilter.value === 'CAFE');
+      categoriaGanadoChecks.classList.toggle('opacity-50', isCafe);
+      categoriaGanadoChecks.classList.toggle('pointer-events-none', isCafe);
+      categoriaMachosCheck.disabled = isCafe;
+      categoriaHembrasCheck.disabled = isCafe;
+    }
+
+    function getVentasSelectedTipos() {
+      if (!categoriaFilter) return [];
+      const mode = (categoriaFilter.value || 'GANADO').toString().toUpperCase();
+
+      if (mode === 'CAFE') return ['CAFE'];
+
+      const tipos = [];
+      if (categoriaMachosCheck && categoriaMachosCheck.checked) tipos.push('MACHOS');
+      if (categoriaHembrasCheck && categoriaHembrasCheck.checked) tipos.push('HEMBRAS');
+      return tipos;
+    }
+
     function updateCategoriaFilterVisibility(mod) {
       if (!categoriaFilterWrap) return;
       if (mod === 'ventas') {
         categoriaFilterWrap.classList.remove('hidden');
-        if (categoriaFilter) categoriaFilter.value = 'HEMBRAS';
+        if (categoriaFilter) categoriaFilter.value = 'GANADO';
+        if (categoriaMachosCheck) categoriaMachosCheck.checked = true;
+        if (categoriaHembrasCheck) categoriaHembrasCheck.checked = true;
+        updateVentasCategoriaUI();
       } else {
         categoriaFilterWrap.classList.add('hidden');
-        if (categoriaFilter) categoriaFilter.value = 'HEMBRAS';
+        if (categoriaFilter) categoriaFilter.value = 'GANADO';
+        if (categoriaMachosCheck) categoriaMachosCheck.checked = true;
+        if (categoriaHembrasCheck) categoriaHembrasCheck.checked = true;
+        updateVentasCategoriaUI();
       }
     }
 
@@ -832,8 +874,24 @@ function switchModule(mod) {
       yearEndFilter.onchange = update;
       if (monthFilter) monthFilter.onchange = update;
       if (sexoFilter) sexoFilter.onchange = update;
-      if (categoriaFilter) categoriaFilter.onchange = update;
-      resetFilters.onclick = () => { populateFilters(); if (sexoFilter) sexoFilter.value = 'todos'; if (categoriaFilter) categoriaFilter.value = 'all'; update(); };
+      if (categoriaFilter) {
+        categoriaFilter.onchange = () => {
+          updateVentasCategoriaUI();
+          update();
+        };
+      }
+      if (categoriaMachosCheck) categoriaMachosCheck.onchange = update;
+      if (categoriaHembrasCheck) categoriaHembrasCheck.onchange = update;
+
+      resetFilters.onclick = () => {
+        populateFilters();
+        if (sexoFilter) sexoFilter.value = 'todos';
+        if (categoriaFilter) categoriaFilter.value = 'GANADO';
+        if (categoriaMachosCheck) categoriaMachosCheck.checked = true;
+        if (categoriaHembrasCheck) categoriaHembrasCheck.checked = true;
+        updateVentasCategoriaUI();
+        update();
+      };
     }
 
     // =========================
@@ -2592,10 +2650,12 @@ const todos = {
 
       
       // --- Categoría (solo Ventas) ---
-      if (mod === 'ventas' && categoriaFilterWrap && !categoriaFilterWrap.classList.contains('hidden') && categoriaFilter) {
-        const cv = categoriaFilter.value;
-        if (cv && cv !== 'all') {
-          filtered = filtered.filter(d => (d.tipo || '').toString().toUpperCase() === cv);
+      if (mod === 'ventas' && categoriaFilterWrap && !categoriaFilterWrap.classList.contains('hidden')) {
+        const tiposSeleccionados = getVentasSelectedTipos();
+        if (!tiposSeleccionados.length) {
+          filtered = [];
+        } else {
+          filtered = filtered.filter(d => tiposSeleccionados.includes((d.tipo || '').toString().toUpperCase()));
         }
       }
 
@@ -5167,8 +5227,7 @@ function renderVentasUI(data) {
 
   const pico = sorted.reduce((best, cur) => (cur.importe||0) > (best.importe||0) ? cur : best, sorted[0] || { mes:'N/A', anio:'', importe:0 });
 
-  // Ajuste: si la categoría es CAFE, el KPI principal debe mostrarse en LIBRAS (no kilos)
-  const cv = (document.getElementById('categoriaFilter')?.value || 'HEMBRAS').toString().toUpperCase();
+  const cv = (document.getElementById('categoriaFilter')?.value || 'GANADO').toString().toUpperCase();
   const isCafe = (cv === 'CAFE') || ((sorted[0]?.tipo || '').toString().toUpperCase() === 'CAFE');
   const totalLibras = sorted.reduce((acc,d)=> acc + ((((d.unidad||'').toString().toUpperCase().includes('LIB')) ? (d.cantidad||0) : 0)), 0);
   const qtyMain = isCafe ? totalLibras : totalKilos;
@@ -5176,6 +5235,18 @@ function renderVentasUI(data) {
   const precioPromMain = qtyMain > 0 ? (totalImp / qtyMain) : 0;
   const priceSmallLabel = isCafe ? 'Prom. precio/libra' : 'Prom. precio/kg';
 
+  // Colores por tipo
+  const COLOR_HEMBRAS = '#16a34a'; // verde
+  const COLOR_MACHOS = '#2563eb';  // azul
+  const COLOR_CAFE = '#f59e0b';
+  const COLOR_OTROS = '#64748b';
+
+  const COLOR_MAP = {
+    'HEMBRAS': COLOR_HEMBRAS,
+    'MACHOS': COLOR_MACHOS,
+    'CAFE': COLOR_CAFE,
+    'OTROS': COLOR_OTROS
+  };
 
   document.getElementById('kpiContainer').innerHTML = `
     <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
@@ -5195,28 +5266,53 @@ function renderVentasUI(data) {
     </div>
   `;
 
-  // Agregados por mes (total)
+  // Agregados por mes
   const key = (d) => `${d.anio}-${String(monthIndex(d.mes)+1).padStart(2,'0')}`;
   const byMonth = {};
   sorted.forEach(d=>{
     const k = key(d);
-    if (!byMonth[k]) byMonth[k] = { label: `${d.mes.slice(0,3)} ${d.anio}`, imp:0, kilos:0 };
-    byMonth[k].imp += (d.importe||0);
-    byMonth[k].kilos += (d.kilos||0);
-  });
-  const monthKeys = Object.keys(byMonth).sort();
-  const labels = monthKeys.map(k=>byMonth[k].label);
-  const impVals = monthKeys.map(k=>byMonth[k].imp);
-  const kiloVals = monthKeys.map(k=>byMonth[k].kilos);
+    if (!byMonth[k]) {
+      byMonth[k] = {
+        label: `${d.mes.slice(0,3)} ${d.anio}`,
+        impTotal: 0,
+        kilosTotal: 0,
+        impMachos: 0,
+        impHembras: 0,
+        impCafe: 0,
+        kilosMachos: 0,
+        kilosHembras: 0,
+        kilosCafe: 0
+      };
+    }
 
-  // Ingresos por tipo (HEMBRAS/MACHOS/CAFE)
+    const tipo = (d.tipo || '').toString().toUpperCase();
+    byMonth[k].impTotal += (d.importe || 0);
+    byMonth[k].kilosTotal += (d.kilos || 0);
+
+    if (tipo === 'MACHOS') {
+      byMonth[k].impMachos += (d.importe || 0);
+      byMonth[k].kilosMachos += (d.kilos || 0);
+    } else if (tipo === 'HEMBRAS') {
+      byMonth[k].impHembras += (d.importe || 0);
+      byMonth[k].kilosHembras += (d.kilos || 0);
+    } else if (tipo === 'CAFE') {
+      byMonth[k].impCafe += (d.importe || 0);
+      byMonth[k].kilosCafe += (d.kilos || 0);
+    }
+  });
+
+  const monthKeys = Object.keys(byMonth).sort();
+  const labels = monthKeys.map(k => byMonth[k].label);
+
+  // Participación de ingresos por tipo
   const byTipo = {};
   sorted.forEach(d=>{
-    const t = (d.tipo||'OTROS');
-    byTipo[t] = (byTipo[t]||0) + (d.importe||0);
+    const t = (d.tipo || 'OTROS').toString().toUpperCase();
+    byTipo[t] = (byTipo[t] || 0) + (d.importe || 0);
   });
   const tipoLabels = Object.keys(byTipo);
-  const tipoVals = tipoLabels.map(t=>byTipo[t]);
+  const tipoVals = tipoLabels.map(t => byTipo[t]);
+  const tipoColors = tipoLabels.map(t => COLOR_MAP[t] || COLOR_OTROS);
 
   chartsContainer.innerHTML = `
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 pb-8">
@@ -5235,35 +5331,123 @@ function renderVentasUI(data) {
     </div>
   `;
 
+  // Ingresos por mes
+  let ingresosDatasets = [];
+  if (isCafe) {
+    ingresosDatasets = [{
+      label: 'Café',
+      data: monthKeys.map(k => byMonth[k].impCafe),
+      backgroundColor: COLOR_CAFE,
+      borderColor: COLOR_CAFE,
+      borderRadius: 8
+    }];
+  } else {
+    const hasMachos = monthKeys.some(k => (byMonth[k].impMachos || 0) !== 0);
+    const hasHembras = monthKeys.some(k => (byMonth[k].impHembras || 0) !== 0);
+
+    if (hasHembras) {
+      ingresosDatasets.push({
+        label: 'Hembras',
+        data: monthKeys.map(k => byMonth[k].impHembras),
+        backgroundColor: COLOR_HEMBRAS,
+        borderColor: COLOR_HEMBRAS,
+        borderRadius: 8
+      });
+    }
+    if (hasMachos) {
+      ingresosDatasets.push({
+        label: 'Machos',
+        data: monthKeys.map(k => byMonth[k].impMachos),
+        backgroundColor: COLOR_MACHOS,
+        borderColor: COLOR_MACHOS,
+        borderRadius: 8
+      });
+    }
+  }
+
   charts.v1 = new Chart(document.getElementById('v1'), {
     type: 'bar',
-    data: { labels, datasets: [{ label: 'Ingresos', data: impVals }] },
+    data: { labels, datasets: ingresosDatasets },
     options: {
-      responsive: true, maintainAspectRatio: false,
+      responsive: true,
+      maintainAspectRatio: false,
       animation: { duration: 650 },
-      plugins: { tooltip: { callbacks: { label: (ctx)=> ` ${fmtNum(ctx.parsed.y,2)}` } } },
+      plugins: {
+        legend: { position: 'bottom' },
+        tooltip: { callbacks: { label: (ctx)=> `${ctx.dataset.label}: ${fmtNum(ctx.parsed.y,2)}` } }
+      },
       scales: { y: { beginAtZero: true } }
     }
   });
+
+  // Kilos por mes
+  let kilosDatasets = [];
+  if (isCafe) {
+    kilosDatasets = [{
+      label: 'Café',
+      data: monthKeys.map(k => byMonth[k].kilosCafe),
+      borderColor: COLOR_CAFE,
+      backgroundColor: COLOR_CAFE,
+      tension: 0.25
+    }];
+  } else {
+    const hasMachos = monthKeys.some(k => (byMonth[k].kilosMachos || 0) !== 0);
+    const hasHembras = monthKeys.some(k => (byMonth[k].kilosHembras || 0) !== 0);
+
+    if (hasHembras) {
+      kilosDatasets.push({
+        label: 'Hembras',
+        data: monthKeys.map(k => byMonth[k].kilosHembras),
+        borderColor: COLOR_HEMBRAS,
+        backgroundColor: COLOR_HEMBRAS,
+        tension: 0.25
+      });
+    }
+    if (hasMachos) {
+      kilosDatasets.push({
+        label: 'Machos',
+        data: monthKeys.map(k => byMonth[k].kilosMachos),
+        borderColor: COLOR_MACHOS,
+        backgroundColor: COLOR_MACHOS,
+        tension: 0.25
+      });
+    }
+  }
 
   charts.v2 = new Chart(document.getElementById('v2'), {
     type: 'line',
-    data: { labels, datasets: [{ label: 'Kilos', data: kiloVals, tension: 0.25 }] },
+    data: { labels, datasets: kilosDatasets },
     options: {
-      responsive: true, maintainAspectRatio: false,
+      responsive: true,
+      maintainAspectRatio: false,
       animation: { duration: 650 },
-      plugins: { tooltip: { callbacks: { label: (ctx)=> ` ${fmtNum(ctx.parsed.y,0)}` } } },
+      plugins: {
+        legend: { position: 'bottom' },
+        tooltip: { callbacks: { label: (ctx)=> `${ctx.dataset.label}: ${fmtNum(ctx.parsed.y,0)}` } }
+      },
       scales: { y: { beginAtZero: true } }
     }
   });
 
+  // Participación por tipo
   charts.v3 = new Chart(document.getElementById('v3'), {
     type: 'doughnut',
-    data: { labels: tipoLabels, datasets: [{ data: tipoVals }] },
+    data: {
+      labels: tipoLabels,
+      datasets: [{
+        data: tipoVals,
+        backgroundColor: tipoColors,
+        borderColor: tipoColors
+      }]
+    },
     options: {
-      responsive: true, maintainAspectRatio: false,
+      responsive: true,
+      maintainAspectRatio: false,
       animation: { duration: 650 },
-      plugins: { tooltip: { callbacks: { label: (ctx)=> `${ctx.label}: ${fmtNum(ctx.parsed,2)}` } } }
+      plugins: {
+        legend: { position: 'bottom' },
+        tooltip: { callbacks: { label: (ctx)=> `${ctx.label}: ${fmtNum(ctx.parsed,2)}` } }
+      }
     }
   });
 }
